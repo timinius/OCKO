@@ -79,7 +79,7 @@ function searchProducts(query, db) {
 
   // LOWER() нужен для кириллицы — SQLite чувствителен к регистру у не-ASCII символов
   const clauses = allTerms.map(() =>
-    '(LOWER(p.title) LIKE ? OR LOWER(COALESCE(p.description,"")) LIKE ? OR LOWER(c.name) LIKE ?)'
+    '(LOWER(p.title) LIKE ? OR LOWER(COALESCE(p.description,'')) LIKE ? OR LOWER(c.name) LIKE ?)'
   ).join(' OR ');
   const params = allTerms.flatMap(w => [`%${w}%`, `%${w}%`, `%${w}%`]);
 
