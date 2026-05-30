@@ -58,13 +58,16 @@ function getSearchVariants(word) {
   return [...variants];
 }
 
-function searchProducts(query, db) {
+function searchProducts(query, db, extraTerms = []) {
   const rawWords = query.toLowerCase()
     .replace(/[^\wа-яёa-z\s]/gi, ' ')
     .split(/\s+/)
     .filter(w => w.length > 2);
 
-  if (rawWords.length === 0) {
+  // Объединяем слова из запроса + AI-термины
+  const combined = [...new Set([...rawWords, ...extraTerms])];
+
+  if (combined.length === 0) {
     return db.prepare(`
       SELECT p.id, p.title, p.price, p.city, p.condition,
              c.name as category_name,
@@ -75,7 +78,7 @@ function searchProducts(query, db) {
   }
 
   // Расширяем каждое слово вариантами и синонимами
-  const allTerms = [...new Set(rawWords.flatMap(w => getSearchVariants(w)))];
+  const allTerms = [...new Set(combined.flatMap(w => getSearchVariants(w)))];
 
   // LOWER() нужен для кириллицы — SQLite чувствителен к регистру у не-ASCII символов
   const clause = "(LOWER(p.title) LIKE ? OR LOWER(COALESCE(p.description,'')) LIKE ? OR LOWER(c.name) LIKE ?)";
@@ -108,7 +111,27 @@ router.post('/chat', async (req, res) => {
 
   try {
     const db = getDB();
-    const products = searchProducts(message, db);
+    const groq = new Groq({ apiKey });
+
+    // Шаг 1: быстрая модель извлекает поисковые термины из запроса пользователя
+    const termResponse = await groq.chat.completions.create({
+      model: 'llama-3.1-8b-instant',
+      max_tokens: 60,
+      temperature: 0.3,
+      messages: [{
+        role: 'system',
+        content: 'По запросу пользователя выдай 4-6 ключевых слов для поиска товаров (на русском и английском). Только слова через запятую, без пояснений. Примеры: "балет" → "обувь, кроссовки, одежда, туфли"; "время" → "часы, watch, смарт"; "ремонт" → "инструмент, перфоратор, шуруповерт, краска"'
+      }, {
+        role: 'user',
+        content: message,
+      }],
+    });
+
+    const termText = termResponse.choices[0]?.message?.content || '';
+    const aiTerms = termText.split(',').map(t => t.trim().toLowerCase()).filter(t => t.length > 1);
+
+    // Объединяем AI-термины с прямыми словами из запроса
+    const products = searchProducts(message, db, aiTerms);
 
     const productContext = products.length > 0
       ? '\n\nДОСТУПНЫЕ ТОВАРЫ:\n' +
@@ -117,8 +140,6 @@ router.post('/chat', async (req, res) => {
         ).join('\n') +
         '\n\nВ КОНЦЕ ответа обязательно добавь строку: RECOMMENDED_IDS:[id1,id2,...] — перечисли ID только тех товаров которые реально подходят под запрос. Если подходящих нет — RECOMMENDED_IDS:[]'
       : '\n\nТовары по запросу не найдены. Сообщи об этом и предложи поискать иначе. Добавь: RECOMMENDED_IDS:[]';
-
-    const groq = new Groq({ apiKey });
 
     const messages = [
       ...history.slice(-8).map(m => ({ role: m.role, content: m.content })),
