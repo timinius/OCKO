@@ -16,7 +16,7 @@ const SUGGESTIONS = [
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Привет! 👋 Я помогу найти нужный товар на OCKO. Что ищете?', products: [] },
+    { role: 'assistant', content: 'Привет! 👋 Я помогу найти нужный товар на Флипп. Что ищете?', products: [] },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -90,7 +90,7 @@ export default function ChatWidget() {
           }}>
             <span style={{ fontSize: 22 }}>🤖</span>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 15 }}>AI-помощник OCKO</div>
+              <div style={{ fontWeight: 700, fontSize: 15 }}>AI-помощник Флипп</div>
               <div style={{ fontSize: 11, opacity: 0.85 }}>Подбираю товары под ваш запрос</div>
             </div>
           </div>

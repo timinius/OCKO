@@ -36,7 +36,7 @@ export default function Register() {
     <div className="page flex-center" style={{ padding: '40px 20px' }}>
       <div style={{ width: '100%', maxWidth: 460 }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <Link to="/" style={{ color: 'var(--red)', fontWeight: 800, fontSize: 32 }}>OCKO</Link>
+          <Link to="/" style={{ color: 'var(--red)', fontWeight: 800, fontSize: 32 }}>Флипп</Link>
           <h1 style={{ fontSize: 22, fontWeight: 700, marginTop: 12, marginBottom: 4 }}>Регистрация</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Создайте аккаунт для покупок и продаж</p>
         </div>
