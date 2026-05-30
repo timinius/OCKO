@@ -3,6 +3,8 @@ backend/node_modules/
 frontend/node_modules/
 frontend/dist/
 backend/ocko.db
+backend/ocko.db-shm
+backend/ocko.db-wal
 backend/uploads/*
 !backend/uploads/.gitkeep
 .env
