@@ -119,7 +119,7 @@ export default function Product() {
           <span>{product.title}</span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 24, marginBottom: 32 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 24, marginBottom: 32 }} className="product-layout">
           {/* Left: Images + Details */}
           <div>
             <div className="card" style={{ marginBottom: 16 }}>
@@ -217,7 +217,7 @@ export default function Product() {
           </div>
 
           {/* Right: Buy panel */}
-          <div style={{ position: 'sticky', top: 80, alignSelf: 'flex-start' }}>
+          <div style={{ position: 'sticky', top: 80, alignSelf: 'flex-start' }} className="product-buy-panel">
             <div className="card" style={{ padding: 20, marginBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                 <span className={`badge ${product.condition === 'new' ? 'badge-green' : 'badge-gray'}`}>

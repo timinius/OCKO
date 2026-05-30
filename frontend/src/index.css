@@ -168,8 +168,75 @@ input, textarea, select { font-family: inherit; }
 .breadcrumbs span { color: var(--border); }
 
 @media (max-width: 1024px) { .grid-4 { grid-template-columns: repeat(3, 1fr); } }
+
 @media (max-width: 768px) {
-  .grid-4, .grid-3 { grid-template-columns: repeat(2, 1fr); }
-  .container { padding: 0 14px; }
+  .grid-4, .grid-3 { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .container { padding: 0 12px; }
+  .page { padding: 16px 0 40px; }
+  .section-title { font-size: 18px; }
+  .price { font-size: 17px; }
+  .price-lg { font-size: 22px; }
+  .btn-lg { padding: 13px 22px; font-size: 14px; }
+
+  /* Mobile catalog layout */
+  .catalog-layout { flex-direction: column !important; }
+  .catalog-sidebar { width: 100% !important; position: static !important; }
+  .catalog-sidebar-inner { display: none; }
+  .catalog-sidebar-inner.open { display: block; }
+
+  /* Mobile product layout */
+  .product-layout { grid-template-columns: 1fr !important; }
+  .product-buy-panel { position: static !important; }
+
+  /* Mobile cart/checkout */
+  .cart-layout { grid-template-columns: 1fr !important; }
+  .checkout-layout { grid-template-columns: 1fr !important; }
+
+  /* Mobile seller header */
+  .seller-header { flex-direction: column !important; }
+
+  /* Mobile profile */
+  .profile-grid { grid-template-columns: 1fr !important; }
 }
-@media (max-width: 480px) { .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+
+@media (max-width: 480px) {
+  .grid-4, .grid-3, .grid-2 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .section-title { font-size: 17px; }
+}
+
+@media (max-width: 380px) {
+  .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+}
+
+/* Home page responsive */
+@media (max-width: 768px) {
+  .categories-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 8px !important; }
+}
+@media (max-width: 480px) {
+  .categories-grid { grid-template-columns: repeat(3, 1fr) !important; }
+}
+@media (max-width: 360px) {
+  .categories-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* Chat widget mobile */
+@media (max-width: 480px) {
+  .chat-widget-window {
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    bottom: 80px !important;
+  }
+  .chat-widget-btn {
+    bottom: 16px !important;
+    right: 16px !important;
+  }
+}
+
+/* Touch-friendly sizing */
+@media (max-width: 768px) {
+  .btn { min-height: 44px; }
+  .btn-sm { min-height: 38px; }
+  .form-input, .form-select, .form-textarea { font-size: 16px !important; } /* prevents zoom on iOS */
+  .page-btn { width: 42px; height: 42px; }
+}

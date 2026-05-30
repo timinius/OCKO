@@ -80,10 +80,10 @@ export default function Home() {
       </section>
 
       {/* Categories */}
-      <section style={{ padding: '40px 0' }}>
+      <section style={{ padding: '32px 0' }}>
         <div className="container">
           <h2 className="section-title">Категории</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
+          <div className="categories-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
             {CATEGORIES.map(cat => (
               <Link key={cat.slug} to={`/catalog?category=${cat.slug}`}
                 style={{

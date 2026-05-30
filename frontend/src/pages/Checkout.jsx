@@ -63,7 +63,7 @@ export default function Checkout() {
         </div>
         <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 24 }}>Оформление заказа</h1>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, alignItems: 'flex-start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, alignItems: 'flex-start' }} className="checkout-layout">
           <form onSubmit={handleSubmit}>
             {/* Delivery */}
             <div className="card" style={{ padding: 24, marginBottom: 16 }}>

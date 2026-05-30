@@ -46,7 +46,7 @@ export default function Cart() {
       <div className="container">
         <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 24 }}>Корзина ({items.length})</h1>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20, alignItems: 'flex-start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20, alignItems: 'flex-start' }} className="cart-layout">
           <div>
             <div className="card" style={{ marginBottom: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '12px 20px', borderBottom: '1px solid var(--border)' }}>

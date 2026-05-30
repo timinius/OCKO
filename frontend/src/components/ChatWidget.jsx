@@ -60,6 +60,7 @@ export default function ChatWidget() {
       {/* Toggle button */}
       <button
         onClick={() => setOpen(o => !o)}
+        className="chat-widget-btn"
         style={{
           position: 'fixed', bottom: 24, right: 24, width: 56, height: 56,
           borderRadius: '50%', background: 'var(--red)', color: 'white',
@@ -77,7 +78,7 @@ export default function ChatWidget() {
 
       {/* Chat window */}
       {open && (
-        <div style={{
+        <div className="chat-widget-window" style={{
           position: 'fixed', bottom: 92, right: 24, width: 360, height: 520,
           background: 'white', borderRadius: 16, boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
           display: 'flex', flexDirection: 'column', zIndex: 999, overflow: 'hidden',

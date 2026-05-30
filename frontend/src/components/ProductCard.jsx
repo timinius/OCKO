@@ -99,38 +99,24 @@ export default function ProductCard({ product, onFavoriteToggle }) {
         )}
       </div>
 
-      <div style={{ padding: '12px 14px', display: 'flex', flexDirection: 'column', flex: 1, gap: 6 }}>
-        <div className="price" style={{ fontSize: 18 }}>{formatPrice(product.price)}</div>
-        <div style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+      <div style={{ padding: '10px 12px', display: 'flex', flexDirection: 'column', flex: 1, gap: 4 }}>
+        <div className="price" style={{ fontSize: 17, letterSpacing: '-0.03em' }}>{formatPrice(product.price)}</div>
+        <div style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', color: 'var(--text)' }}>
           {product.title}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 'auto', paddingTop: 8 }}>
-          <span style={{ fontSize: 12, color: 'var(--text-secondary)', flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 'auto', paddingTop: 6 }}>
+          <span style={{ fontSize: 11, color: 'var(--text-secondary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             📍 {product.city}
           </span>
-          <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-            ♡ {likes}
-          </span>
+          <span style={{ fontSize: 11, color: 'var(--text-secondary)', flexShrink: 0 }}>♡ {likes}</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-            {timeAgo(product.created_at)}
-          </span>
-          {product.seller_rating > 0 && (
-            <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 12 }}>
-              <StarRating value={product.seller_rating} size={12} />
-              <span style={{ color: 'var(--text-secondary)' }}>{product.seller_rating}</span>
-            </span>
-          )}
-        </div>
-
         <button
           onClick={handleAddToCart}
           disabled={addingToCart || product.seller_id === user?.id}
           className="btn btn-primary btn-sm"
-          style={{ marginTop: 8, width: '100%' }}
+          style={{ marginTop: 6, width: '100%', fontSize: 12, padding: '8px 10px', minHeight: 36 }}
         >
-          {added ? '✓ Добавлено' : addingToCart ? 'Добавление...' : 'В корзину'}
+          {added ? '✓ В корзине' : addingToCart ? '...' : 'В корзину'}
         </button>
       </div>
     </Link>
