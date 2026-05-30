@@ -32,7 +32,7 @@ router.get('/', optionalAuth, (req, res) => {
   let where = ['p.status = ?'];
   let params = ['active'];
 
-  if (search) { where.push("p.title LIKE ?"); params.push(`%${search}%`); }
+  if (search) { where.push("(LOWER(p.title) LIKE ? OR LOWER(COALESCE(p.description,'')) LIKE ?)"); params.push(`%${search.toLowerCase()}%`); params.push(`%${search.toLowerCase()}%`); }
   if (category) { where.push("c.slug = ?"); params.push(category); }
   if (min_price) { where.push("p.price >= ?"); params.push(parseFloat(min_price)); }
   if (max_price) { where.push("p.price <= ?"); params.push(parseFloat(max_price)); }
