@@ -111,11 +111,12 @@ router.post('/chat', async (req, res) => {
     const products = searchProducts(message, db);
 
     const productContext = products.length > 0
-      ? '\n\nДОСТУПНЫЕ ТОВАРЫ (используй их для рекомендаций):\n' +
-        products.map((p, i) =>
-          `${i + 1}. "${p.title}" — ${formatPrice(p.price)} | ${p.condition === 'new' ? 'Новый' : 'Б/у'} | ${p.city}${p.description ? ' | ' + p.description.slice(0, 80) : ''}`
-        ).join('\n')
-      : '\n\nТовары по запросу не найдены. Сообщи об этом и предложи поискать иначе.';
+      ? '\n\nДОСТУПНЫЕ ТОВАРЫ:\n' +
+        products.map(p =>
+          `[ID:${p.id}] "${p.title}" — ${formatPrice(p.price)} | ${p.condition === 'new' ? 'Новый' : 'Б/у'} | ${p.city}${p.description ? ' | ' + p.description.slice(0, 80) : ''}`
+        ).join('\n') +
+        '\n\nВ КОНЦЕ ответа обязательно добавь строку: RECOMMENDED_IDS:[id1,id2,...] — перечисли ID только тех товаров которые реально подходят под запрос. Если подходящих нет — RECOMMENDED_IDS:[]'
+      : '\n\nТовары по запросу не найдены. Сообщи об этом и предложи поискать иначе. Добавь: RECOMMENDED_IDS:[]';
 
     const groq = new Groq({ apiKey });
 
@@ -126,7 +127,7 @@ router.post('/chat', async (req, res) => {
 
     const response = await groq.chat.completions.create({
       model: 'llama-3.3-70b-versatile',
-      max_tokens: 500,
+      max_tokens: 600,
       temperature: 0.7,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT + productContext },
@@ -134,8 +135,21 @@ router.post('/chat', async (req, res) => {
       ],
     });
 
-    const reply = response.choices[0]?.message?.content || 'Не удалось получить ответ';
-    res.json({ reply, products: products.slice(0, 4) });
+    const rawReply = response.choices[0]?.message?.content || '';
+
+    // Извлекаем рекомендованные ID и убираем служебную строку из ответа
+    const idMatch = rawReply.match(/RECOMMENDED_IDS:\[([^\]]*)\]/);
+    const recommendedIds = idMatch && idMatch[1]
+      ? idMatch[1].split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n))
+      : [];
+    const reply = rawReply.replace(/\n?RECOMMENDED_IDS:\[[^\]]*\]/g, '').trim();
+
+    // Показываем только рекомендованные карточки
+    const recommendedProducts = recommendedIds.length > 0
+      ? products.filter(p => recommendedIds.includes(p.id))
+      : [];
+
+    res.json({ reply, products: recommendedProducts });
 
   } catch (e) {
     console.error('Groq error:', e.message);
