@@ -7,7 +7,8 @@ const { authenticateToken, JWT_SECRET } = require('../middleware/auth');
 const router = express.Router();
 
 router.post('/register', (req, res) => {
-  const { email, password, name, phone, city } = req.body;
+  const { password, name, phone, city } = req.body;
+  const email = req.body.email?.trim().toLowerCase();
   if (!email || !password || !name) {
     return res.status(400).json({ error: 'Email, пароль и имя обязательны' });
   }
@@ -29,7 +30,8 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  const { email, password } = req.body;
+  const { password } = req.body;
+  const email = req.body.email?.trim().toLowerCase();
   if (!email || !password) return res.status(400).json({ error: 'Введите email и пароль' });
 
   const db = getDB();

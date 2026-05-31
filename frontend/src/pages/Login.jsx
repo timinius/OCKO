@@ -47,7 +47,7 @@ export default function Login() {
             <div className="form-group" style={{ marginBottom: 16 }}>
               <label className="form-label">Email</label>
               <input type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                className="form-input" placeholder="your@email.com" autoComplete="email" required />
+                className="form-input" placeholder="your@email.com" autoComplete="email" autoCapitalize="none" autoCorrect="off" required />
             </div>
             <div className="form-group" style={{ marginBottom: 24 }}>
               <label className="form-label">Пароль</label>

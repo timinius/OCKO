@@ -54,7 +54,7 @@ export default function Register() {
             </div>
             <div className="form-group" style={{ marginBottom: 16 }}>
               <label className="form-label">Email *</label>
-              <input type="email" {...f('email')} className="form-input" placeholder="your@email.com" required />
+              <input type="email" {...f('email')} className="form-input" placeholder="your@email.com" autoCapitalize="none" autoCorrect="off" required />
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
               <div className="form-group">
