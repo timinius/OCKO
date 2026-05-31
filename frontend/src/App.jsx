@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import Header from './components/Header';
@@ -23,10 +23,13 @@ import Chats from './pages/Chats';
 import NotFound from './pages/NotFound';
 
 function AppInner() {
+  const location = useLocation();
+  const isChats = location.pathname === '/chats';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header />
-      <main style={{ flex: 1 }}>
+      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: isChats ? 'hidden' : 'visible' }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/catalog" element={<Catalog />} />
@@ -47,8 +50,8 @@ function AppInner() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      <Footer />
-      <ChatWidget />
+      {!isChats && <Footer />}
+      {!isChats && <ChatWidget />}
     </div>
   );
 }

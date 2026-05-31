@@ -92,13 +92,13 @@ export default function Chats() {
     : null;
 
   return (
-    <div className="page" style={{ padding: '0' }}>
-      <div style={{ display: 'flex', height: 'calc(100vh - 60px)', background: 'var(--bg)' }}>
+    <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div style={{ display: 'flex', width: '100%', background: 'var(--bg)', overflow: 'hidden' }}>
 
         {/* Список диалогов */}
         <div style={{
           width: 340, flexShrink: 0, background: 'white', borderRight: '1px solid var(--border)',
-          display: 'flex', flexDirection: 'column', overflowY: 'auto',
+          display: 'flex', flexDirection: 'column', overflowY: 'auto', height: '100%',
         }} className="chats-sidebar">
           <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', fontWeight: 800, fontSize: 18 }}>
             Сообщения
