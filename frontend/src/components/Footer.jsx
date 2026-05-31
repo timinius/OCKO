@@ -7,8 +7,8 @@ export default function Footer() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 36, marginBottom: 40 }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-              <span style={{ background: 'var(--primary)', borderRadius: 8, width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 900, color: 'white' }}>Ф</span>
-              <span style={{ color: 'white', fontWeight: 900, fontSize: 20, letterSpacing: -0.5 }}>Флипп</span>
+              <img src="/logo-mark-mint.svg" alt="" style={{ width: 28, height: 28 }} />
+              <span style={{ color: 'white', fontWeight: 800, fontSize: 20, letterSpacing: '-0.035em', fontFamily: 'Onest, sans-serif' }}>Флипп</span>
             </div>
             <p style={{ fontSize: 13, lineHeight: 1.7 }}>
               Современный маркетплейс для покупки и продажи. Быстро, удобно, безопасно.

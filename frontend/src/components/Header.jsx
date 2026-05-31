@@ -52,9 +52,9 @@ export default function Header() {
         <div className="container" style={{ display: 'flex', alignItems: 'center', gap: 12, height: 60 }}>
 
           {/* Logo */}
-          <Link to="/" style={{ color: 'white', fontWeight: 900, fontSize: 22, letterSpacing: -0.5, flexShrink: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ background: 'var(--primary)', borderRadius: 8, width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 900 }}>Ф</span>
-            <span className="logo-text">Флипп</span>
+          <Link to="/" style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img src="/logo-mark-white.svg" alt="Флипп" style={{ width: 32, height: 32 }} />
+            <span className="logo-text" style={{ color: 'white', fontWeight: 800, fontSize: 21, letterSpacing: '-0.035em', fontFamily: 'Onest, sans-serif' }}>Флипп</span>
           </Link>
 
           {/* Desktop Search */}

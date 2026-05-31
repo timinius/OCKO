@@ -1,17 +1,23 @@
 :root {
-  --primary: #3D7A52;
-  --primary-dark: #2D5C3D;
-  --primary-light: #5A9E6F;
-  --primary-bg: #EEF4F0;
+  /* Цвета из брендбука Флипп */
+  --brand-dark: #173A2A;
+  --brand-green: #36855A;
+  --brand-mint: #8ED3A8;
+  --brand-ink: #16271D;
+
+  --primary: #36855A;
+  --primary-dark: #173A2A;
+  --primary-light: #8ED3A8;
+  --primary-bg: #EDF5F0;
   --accent: #E63946;
   --accent-dark: #C1121F;
-  --bg: #F5F7F5;
+  --bg: #F4F7F5;
   --white: #FFFFFF;
-  --text: #141F17;
-  --text-secondary: #6B7C70;
-  --border: #DDE6DF;
-  --shadow: 0 2px 12px rgba(61,122,82,0.09);
-  --shadow-hover: 0 8px 28px rgba(61,122,82,0.18);
+  --text: #16271D;
+  --text-secondary: #5A7060;
+  --border: #D8E6DC;
+  --shadow: 0 2px 12px rgba(23,58,42,0.09);
+  --shadow-hover: 0 8px 28px rgba(23,58,42,0.18);
   --radius: 12px;
   --radius-lg: 18px;
   --radius-xl: 24px;
@@ -20,7 +26,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
   font-size: 14px;

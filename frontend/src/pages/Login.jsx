@@ -32,7 +32,10 @@ export default function Login() {
     <div className="page flex-center" style={{ padding: '40px 20px' }}>
       <div style={{ width: '100%', maxWidth: 420 }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <Link to="/" style={{ color: 'var(--red)', fontWeight: 800, fontSize: 32 }}>Флипп</Link>
+          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+            <img src="/logo-mark-green.svg" alt="" style={{ width: 40, height: 40 }} />
+            <span style={{ color: 'var(--primary-dark)', fontWeight: 800, fontSize: 28, letterSpacing: '-0.035em', fontFamily: 'Onest, sans-serif' }}>Флипп</span>
+          </Link>
           <h1 style={{ fontSize: 22, fontWeight: 700, marginTop: 12, marginBottom: 4 }}>Вход в аккаунт</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Войдите, чтобы покупать и продавать</p>
         </div>

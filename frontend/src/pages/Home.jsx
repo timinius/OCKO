@@ -47,9 +47,13 @@ export default function Home() {
           <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.1)', borderRadius: 20, padding: '6px 16px', fontSize: 13, marginBottom: 20, backdropFilter: 'blur(8px)' }}>
             ✨ Тысячи товаров от проверенных продавцов
           </div>
-          <h1 style={{ fontSize: 52, fontWeight: 900, marginBottom: 16, letterSpacing: -1.5, lineHeight: 1.1 }}>
-            Купи и продай<br />
-            <span style={{ color: '#7BC89A' }}>на Флипп</span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 20 }}>
+            <img src="/logo-mark-mint.svg" alt="" style={{ width: 56, height: 56 }} />
+            <span style={{ color: 'white', fontWeight: 800, fontSize: 48, letterSpacing: '-0.035em', fontFamily: 'Onest, sans-serif', lineHeight: 1 }}>Флипп</span>
+          </div>
+          <h1 style={{ fontSize: 38, fontWeight: 800, marginBottom: 16, letterSpacing: -1, lineHeight: 1.15, fontFamily: 'Onest, sans-serif' }}>
+            Покупай и продавай<br />
+            <span style={{ color: 'var(--brand-mint)' }}>быстро и выгодно</span>
           </h1>
           <p style={{ fontSize: 17, opacity: 0.8, marginBottom: 40, maxWidth: 480, margin: '0 auto 40px', lineHeight: 1.6 }}>
             Электроника, одежда, авто, недвижимость — всё в одном месте
