@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import api from '../api/client';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -92,8 +92,8 @@ export default function Chats() {
     : null;
 
   return (
-    <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-      <div style={{ display: 'flex', width: '100%', background: 'var(--bg)', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flex: 1, overflow: 'hidden', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', width: '100%', maxWidth: 1240, background: 'var(--bg)', overflow: 'hidden', boxShadow: '0 0 0 1px var(--border)' }}>
 
         {/* Список диалогов */}
         <div style={{
@@ -175,34 +175,43 @@ export default function Chats() {
                   {active.product_price && <span style={{ color: 'var(--accent)', marginLeft: 8, fontWeight: 700 }}>{new Intl.NumberFormat('ru-RU').format(active.product_price)} ₽</span>}
                 </div>
               </div>
+              <Link to={`/product/${active.product_id}`}
+                style={{ flexShrink: 0, background: 'var(--primary-bg)', color: 'var(--primary)', border: '1.5px solid var(--primary)', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap', transition: 'all 0.15s' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--primary)'; e.currentTarget.style.color = 'white'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'var(--primary-bg)'; e.currentTarget.style.color = 'var(--primary)'; }}
+              >
+                К товару →
+              </Link>
             </div>
 
             {/* Сообщения */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {messages.length === 0 && (
-                <div style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: 14, margin: 'auto' }}>
-                  Начните диалог — напишите вопрос по товару
-                </div>
-              )}
-              {messages.map(msg => {
-                const isOwn = msg.sender_id === user.id;
-                return (
-                  <div key={msg.id} style={{ display: 'flex', justifyContent: isOwn ? 'flex-end' : 'flex-start' }}>
-                    <div style={{
-                      maxWidth: '70%', padding: '10px 14px',
-                      borderRadius: isOwn ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-                      background: isOwn ? 'var(--primary)' : 'white',
-                      color: isOwn ? 'white' : 'var(--text)',
-                      boxShadow: 'var(--shadow)',
-                      border: isOwn ? 'none' : '1px solid var(--border)',
-                    }}>
-                      <div style={{ fontSize: 14, lineHeight: 1.5, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{msg.text}</div>
-                      <div style={{ fontSize: 11, marginTop: 4, opacity: 0.7, textAlign: 'right' }}>{formatTime(msg.created_at)}</div>
-                    </div>
+            <div style={{ flex: 1, overflowY: 'auto' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', minHeight: '100%', padding: '20px', gap: 10 }}>
+                {messages.length === 0 && (
+                  <div style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: 14, paddingBottom: 20 }}>
+                    Начните диалог — напишите вопрос по товару
                   </div>
-                );
-              })}
-              <div ref={bottomRef} />
+                )}
+                {messages.map(msg => {
+                  const isOwn = msg.sender_id === user.id;
+                  return (
+                    <div key={msg.id} style={{ display: 'flex', justifyContent: isOwn ? 'flex-end' : 'flex-start' }}>
+                      <div style={{
+                        maxWidth: '70%', padding: '10px 14px',
+                        borderRadius: isOwn ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                        background: isOwn ? 'var(--primary)' : 'white',
+                        color: isOwn ? 'white' : 'var(--text)',
+                        boxShadow: 'var(--shadow)',
+                        border: isOwn ? 'none' : '1px solid var(--border)',
+                      }}>
+                        <div style={{ fontSize: 14, lineHeight: 1.5, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{msg.text}</div>
+                        <div style={{ fontSize: 11, marginTop: 4, opacity: 0.7, textAlign: 'right' }}>{formatTime(msg.created_at)}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+                <div ref={bottomRef} />
+              </div>
             </div>
 
             {/* Поле ввода */}
