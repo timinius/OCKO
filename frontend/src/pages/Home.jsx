@@ -62,15 +62,16 @@ export default function Home() {
           <form onSubmit={handleSearch} style={{ display: 'flex', maxWidth: 580, margin: '0 auto 32px', borderRadius: 16, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.25)' }}>
             <input type="text" value={searchVal} onChange={e => setSearchVal(e.target.value)}
               placeholder="Что ищете? iPhone, велосипед, диван..."
-              style={{ flex: 1, padding: '18px 22px', border: 'none', fontSize: 15, outline: 'none', color: 'var(--text)' }}
+              style={{ flex: 1, padding: '18px 22px', border: 'none', fontSize: 15, outline: 'none', color: 'var(--text)', minWidth: 0 }}
             />
-            <button type="submit" style={{
-              background: 'var(--primary)', color: 'white', border: 'none', padding: '18px 28px',
-              fontWeight: 700, fontSize: 15, cursor: 'pointer', flexShrink: 0, transition: 'background 0.2s',
-            }}
+            <button type="submit" className="hero-search-btn"
+              style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '18px 24px', fontWeight: 700, fontSize: 15, cursor: 'pointer', flexShrink: 0, transition: 'background 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
               onMouseEnter={e => e.currentTarget.style.background = 'var(--primary-dark)'}
               onMouseLeave={e => e.currentTarget.style.background = 'var(--primary)'}
-            >Найти</button>
+            >
+              <svg className="hero-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ display: 'none' }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span className="hero-search-text">Найти</span>
+            </button>
           </form>
 
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>

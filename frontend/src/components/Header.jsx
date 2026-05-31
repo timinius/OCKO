@@ -58,7 +58,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Search */}
-          <form onSubmit={handleSearch} className="desktop-search" style={{ flex: 1, display: 'flex', maxWidth: 560 }}>
+          <form onSubmit={handleSearch} className="desktop-search" style={{ flex: 1, display: 'flex' }}>
             <div style={{ flex: 1, position: 'relative' }}>
               <svg style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', opacity: 0.45 }} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5">
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>

@@ -63,14 +63,14 @@ export default function ChatWidget() {
         className="chat-widget-btn"
         style={{
           position: 'fixed', bottom: 24, right: 24, width: 56, height: 56,
-          borderRadius: '50%', background: 'var(--red)', color: 'white',
-          border: 'none', cursor: 'pointer', zIndex: 1000,
-          boxShadow: '0 4px 16px rgba(192,57,43,0.4)',
+          borderRadius: '50%', background: 'white', color: 'var(--primary)',
+          border: '2px solid var(--primary)', cursor: 'pointer', zIndex: 1000,
+          boxShadow: '0 4px 20px rgba(54,133,90,0.4)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 24, transition: 'transform 0.2s, background 0.2s',
+          fontSize: 24, transition: 'transform 0.2s, box-shadow 0.2s',
         }}
-        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.08)'}
-        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.boxShadow = '0 6px 28px rgba(54,133,90,0.55)'; }}
+        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(54,133,90,0.4)'; }}
         title="AI-помощник по товарам"
       >
         {open ? '✕' : '🤖'}
@@ -86,7 +86,7 @@ export default function ChatWidget() {
         }}>
           {/* Header */}
           <div style={{
-            background: 'var(--red)', color: 'white', padding: '14px 16px',
+            background: 'var(--primary)', color: 'white', padding: '14px 16px',
             display: 'flex', alignItems: 'center', gap: 10,
           }}>
             <span style={{ fontSize: 22 }}>🤖</span>
@@ -105,7 +105,7 @@ export default function ChatWidget() {
                 }}>
                   <div style={{
                     maxWidth: '82%', padding: '9px 13px', borderRadius: msg.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                    background: msg.role === 'user' ? 'var(--red)' : '#F5F5F5',
+                    background: msg.role === 'user' ? 'var(--primary)' : '#F0F0F0',
                     color: msg.role === 'user' ? 'white' : 'var(--text)',
                     fontSize: 13, lineHeight: 1.5, whiteSpace: 'pre-wrap',
                   }}>
@@ -122,7 +122,7 @@ export default function ChatWidget() {
                           borderRadius: 10, border: '1px solid var(--border)', textDecoration: 'none',
                           transition: 'border-color 0.15s',
                         }}
-                        onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--red)'}
+                        onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--primary)'}
                         onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
                       >
                         <img src={p.image || 'https://via.placeholder.com/48'} alt=""
@@ -133,7 +133,7 @@ export default function ChatWidget() {
                           <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {p.title}
                           </div>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--red)' }}>{formatPrice(p.price)}</div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--accent)' }}>{formatPrice(p.price)}</div>
                           <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
                             {p.condition === 'new' ? 'Новый' : 'Б/у'} · {p.city}
                           </div>
@@ -163,7 +163,7 @@ export default function ChatWidget() {
                       background: 'white', fontSize: 11, cursor: 'pointer', color: 'var(--text)',
                       transition: 'all 0.15s',
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--red)'; e.currentTarget.style.color = 'var(--red)'; }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.color = 'var(--primary)'; }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text)'; }}
                   >
                     {s}
@@ -188,12 +188,12 @@ export default function ChatWidget() {
                 borderRadius: 20, fontSize: 13, outline: 'none',
                 transition: 'border-color 0.15s',
               }}
-              onFocus={e => e.target.style.borderColor = 'var(--red)'}
+              onFocus={e => e.target.style.borderColor = 'var(--primary)'}
               onBlur={e => e.target.style.borderColor = 'var(--border)'}
             />
             <button onClick={() => send()} disabled={loading || !input.trim()}
               style={{
-                width: 38, height: 38, borderRadius: '50%', background: input.trim() ? 'var(--red)' : 'var(--border)',
+                width: 38, height: 38, borderRadius: '50%', background: input.trim() ? 'var(--primary)' : 'var(--border)',
                 border: 'none', color: 'white', cursor: input.trim() ? 'pointer' : 'default',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                 transition: 'background 0.2s',

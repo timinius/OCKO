@@ -11,6 +11,7 @@
   --primary-bg: #EDF5F0;
   --accent: #E63946;
   --accent-dark: #C1121F;
+  --red: #E63946;
   --bg: #F4F7F5;
   --white: #FFFFFF;
   --text: #16271D;
@@ -217,6 +218,11 @@ input, textarea, select { font-family: inherit; }
 /* Home page responsive */
 @media (max-width: 768px) {
   .categories-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 8px !important; }
+}
+@media (max-width: 480px) {
+  .hero-search-btn { padding: 18px 16px !important; }
+  .hero-search-text { display: none !important; }
+  .hero-search-icon { display: block !important; }
 }
 @media (max-width: 480px) {
   .categories-grid { grid-template-columns: repeat(3, 1fr) !important; }
