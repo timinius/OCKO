@@ -1,12 +1,11 @@
 const { Database: _Database } = require('node-sqlite3-wasm');
 const path = require('path');
+const fs = require('fs');
 const bcrypt = require('bcryptjs');
 
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, '..', 'ocko.db');
 let db;
 
-// node-sqlite3-wasm accepts run/get/all with a single value or array,
-// but better-sqlite3 allows multiple positional args. This wrapper adds that.
 function wrapStmt(stmt) {
   const _run = stmt.run.bind(stmt);
   const _get = stmt.get.bind(stmt);
@@ -17,10 +16,23 @@ function wrapStmt(stmt) {
   return stmt;
 }
 
+function clearStaleLock() {
+  const lockPath = DB_PATH + '.lock';
+  try {
+    if (fs.existsSync(lockPath)) {
+      fs.rmSync(lockPath, { recursive: true, force: true });
+      console.log('Удалён стейл-лок базы данных');
+    }
+  } catch (e) {
+    console.warn('Не удалось удалить лок:', e.message);
+  }
+}
+
 function getDB() {
   if (!db) {
+    clearStaleLock();
     db = new _Database(DB_PATH);
-    db.exec('PRAGMA busy_timeout = 10000; PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
+    db.exec('PRAGMA foreign_keys = ON;');
     const _prepare = db.prepare.bind(db);
     db.prepare = (sql) => wrapStmt(_prepare(sql));
   }
