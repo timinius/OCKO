@@ -8,7 +8,7 @@ export default function Footer() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
               <img src="/logo-mark-mint.svg" alt="" style={{ width: 28, height: 28 }} />
-              <span style={{ color: 'white', fontWeight: 800, fontSize: 20, letterSpacing: '-0.035em', fontFamily: 'Onest, sans-serif' }}>Флипп</span>
+              <span style={{ color: 'white', fontWeight: 800, fontSize: 20, letterSpacing: '-0.035em', fontFamily: 'Onest, sans-serif' }}>Флип</span>
             </div>
             <p style={{ fontSize: 13, lineHeight: 1.7 }}>
               Современный маркетплейс для покупки и продажи. Быстро, удобно, безопасно.
@@ -49,7 +49,7 @@ export default function Footer() {
           </div>
         </div>
         <div style={{ borderTop: '1px solid #1E3322', paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-          <span style={{ fontSize: 12 }}>© 2024 Флипп. Все права защищены.</span>
+          <span style={{ fontSize: 12 }}>© 2024 Флип. Все права защищены.</span>
           <span style={{ fontSize: 12, color: '#5A7A5E' }}>Безопасные сделки · Быстрая доставка · Поддержка 24/7</span>
         </div>
       </div>

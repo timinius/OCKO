@@ -53,8 +53,8 @@ export default function Header() {
 
           {/* Logo */}
           <Link to="/" style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <img src="/logo-mark-white.svg" alt="Флипп" style={{ width: 32, height: 32 }} />
-            <span className="logo-text" style={{ color: 'white', fontWeight: 800, fontSize: 21, letterSpacing: '-0.035em', fontFamily: 'Onest, sans-serif' }}>Флипп</span>
+            <img src="/logo-mark-mint.svg" alt="Флип" style={{ width: 32, height: 32 }} />
+            <span className="logo-text" style={{ color: 'white', fontWeight: 800, fontSize: 21, letterSpacing: '-0.035em', fontFamily: 'Onest, sans-serif' }}>Флип</span>
           </Link>
 
           {/* Desktop Search */}
@@ -124,14 +124,20 @@ export default function Header() {
           </nav>
 
           {/* Mobile right icons */}
-          <div className="mobile-icons" style={{ display: 'none', alignItems: 'center', gap: 4, marginLeft: 'auto' }}>
+          <div className="mobile-icons" style={{ display: 'none', alignItems: 'center', gap: 2, marginLeft: 'auto' }}>
             <button onClick={() => setSearchOpen(!searchOpen)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.8)', padding: 8, cursor: 'pointer', borderRadius: 8 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </button>
-            <Link to="/cart" style={{ color: 'rgba(255,255,255,0.8)', padding: 8, position: 'relative', display: 'flex', borderRadius: 8 }}>
-              <CartIcon/>
-              {count > 0 && <span style={{ position: 'absolute', top: 3, right: 3, background: 'var(--accent)', color: 'white', borderRadius: '50%', width: 16, height: 16, fontSize: 9, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{count}</span>}
-            </Link>
+            {user ? (
+              <Link to="/cart" style={{ color: 'rgba(255,255,255,0.8)', padding: 8, position: 'relative', display: 'flex', borderRadius: 8 }}>
+                <CartIcon/>
+                {count > 0 && <span style={{ position: 'absolute', top: 3, right: 3, background: 'var(--accent)', color: 'white', borderRadius: '50%', width: 16, height: 16, fontSize: 9, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{count}</span>}
+              </Link>
+            ) : (
+              <Link to="/login" style={{ background: 'var(--primary)', color: 'white', borderRadius: 8, padding: '6px 12px', fontWeight: 700, fontSize: 13, whiteSpace: 'nowrap' }}>
+                Войти
+              </Link>
+            )}
             <button onClick={() => setMobileOpen(!mobileOpen)} style={{ background: 'none', border: 'none', color: 'white', padding: 8, cursor: 'pointer', borderRadius: 8, display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'center' }}>
               <span style={{ display: 'block', width: 22, height: 2, background: 'white', borderRadius: 2, transition: 'transform 0.2s', transform: mobileOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none' }}/>
               <span style={{ display: 'block', width: 22, height: 2, background: 'white', borderRadius: 2, opacity: mobileOpen ? 0 : 1, transition: 'opacity 0.2s' }}/>
@@ -155,48 +161,59 @@ export default function Header() {
 
       {/* Mobile Menu Overlay */}
       {mobileOpen && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 99, display: 'flex' }}>
+        <div style={{ position: 'fixed', top: 60, left: 0, right: 0, bottom: 0, zIndex: 99, display: 'flex' }}>
           <div style={{ flex: 1, background: 'rgba(0,0,0,0.5)' }} onClick={() => setMobileOpen(false)} />
           <div style={{ width: 280, background: '#1A2E1F', height: '100%', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ padding: '20px 20px 12px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-              {user ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: 'white', fontSize: 16 }}>{initials}</div>
-                  <div>
-                    <div style={{ color: 'white', fontWeight: 700 }}>{user.name}</div>
-                    <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>{user.email}</div>
+
+            {user ? (
+              <>
+                {/* Залогинен: профиль + создать объявление */}
+                <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+                    <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: 'white', fontSize: 16, flexShrink: 0 }}>{initials}</div>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ color: 'white', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.name}</div>
+                      <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</div>
+                    </div>
+                  </div>
+                  <Link to="/sell" onClick={() => setMobileOpen(false)}
+                    style={{ display: 'block', textAlign: 'center', background: 'var(--primary)', color: 'white', padding: '11px 0', borderRadius: 10, fontWeight: 700, fontSize: 14 }}>
+                    + Разместить объявление
+                  </Link>
+                </div>
+
+                <nav style={{ padding: '8px 0', flex: 1 }}>
+                  <MobileNavLink to="/" onClick={() => setMobileOpen(false)}>🏠 Главная</MobileNavLink>
+                  <MobileNavLink to="/catalog" onClick={() => setMobileOpen(false)}>🔍 Каталог</MobileNavLink>
+                  <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '8px 20px' }}/>
+                  <MobileNavLink to="/profile" onClick={() => setMobileOpen(false)}>👤 Профиль</MobileNavLink>
+                  <MobileNavLink to="/profile/listings" onClick={() => setMobileOpen(false)}>📦 Мои объявления</MobileNavLink>
+                  <MobileNavLink to="/orders" onClick={() => setMobileOpen(false)}>🛍️ Мои заказы</MobileNavLink>
+                  <MobileNavLink to="/favorites" onClick={() => setMobileOpen(false)}>♡ Избранное</MobileNavLink>
+                  <MobileNavLink to="/cart" onClick={() => setMobileOpen(false)}>🛒 Корзина {count > 0 && `(${count})`}</MobileNavLink>
+                </nav>
+
+                <div style={{ padding: '12px 20px 24px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                  <button onClick={handleLogout} style={{ width: '100%', padding: '11px', background: 'rgba(230,57,70,0.15)', border: '1px solid rgba(230,57,70,0.3)', color: '#FF8089', borderRadius: 10, fontWeight: 600, cursor: 'pointer', fontSize: 14 }}>Выйти</button>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Не залогинен: вход/регистрация */}
+                <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, marginBottom: 12 }}>Войдите, чтобы покупать и продавать</div>
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <Link to="/login" onClick={() => setMobileOpen(false)} style={{ flex: 1, textAlign: 'center', background: 'var(--primary)', color: 'white', padding: '11px 0', borderRadius: 10, fontWeight: 700, fontSize: 14 }}>Войти</Link>
+                    <Link to="/register" onClick={() => setMobileOpen(false)} style={{ flex: 1, textAlign: 'center', background: 'rgba(255,255,255,0.12)', color: 'white', padding: '11px 0', borderRadius: 10, fontWeight: 700, fontSize: 14 }}>Регистрация</Link>
                   </div>
                 </div>
-              ) : (
-                <div style={{ display: 'flex', gap: 10 }}>
-                  <Link to="/login" onClick={() => setMobileOpen(false)} style={{ flex: 1, textAlign: 'center', background: 'var(--primary)', color: 'white', padding: '10px 0', borderRadius: 10, fontWeight: 700, fontSize: 14 }}>Войти</Link>
-                  <Link to="/register" onClick={() => setMobileOpen(false)} style={{ flex: 1, textAlign: 'center', background: 'rgba(255,255,255,0.1)', color: 'white', padding: '10px 0', borderRadius: 10, fontWeight: 700, fontSize: 14 }}>Регистрация</Link>
-                </div>
-              )}
-            </div>
 
-            <nav style={{ padding: '12px 0', flex: 1 }}>
-              {user && (
-                <MobileNavLink to="/sell" onClick={() => setMobileOpen(false)} accent>
-                  + Разместить объявление
-                </MobileNavLink>
-              )}
-              <MobileNavLink to="/" onClick={() => setMobileOpen(false)}>🏠 Главная</MobileNavLink>
-              <MobileNavLink to="/catalog" onClick={() => setMobileOpen(false)}>🛒 Каталог</MobileNavLink>
-              {user && <>
-                <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '8px 20px' }}/>
-                <MobileNavLink to="/profile" onClick={() => setMobileOpen(false)}>👤 Профиль</MobileNavLink>
-                <MobileNavLink to="/profile/listings" onClick={() => setMobileOpen(false)}>📦 Мои объявления</MobileNavLink>
-                <MobileNavLink to="/orders" onClick={() => setMobileOpen(false)}>🛍️ Мои заказы</MobileNavLink>
-                <MobileNavLink to="/favorites" onClick={() => setMobileOpen(false)}>♡ Избранное</MobileNavLink>
-                <MobileNavLink to="/cart" onClick={() => setMobileOpen(false)}>🛒 Корзина {count > 0 && `(${count})`}</MobileNavLink>
-              </>}
-            </nav>
-
-            {user && (
-              <div style={{ padding: '12px 20px 28px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-                <button onClick={handleLogout} style={{ width: '100%', padding: '11px', background: 'rgba(230,57,70,0.15)', border: '1px solid rgba(230,57,70,0.3)', color: '#FF8089', borderRadius: 10, fontWeight: 600, cursor: 'pointer', fontSize: 14 }}>Выйти</button>
-              </div>
+                <nav style={{ padding: '8px 0', flex: 1 }}>
+                  <MobileNavLink to="/" onClick={() => setMobileOpen(false)}>🏠 Главная</MobileNavLink>
+                  <MobileNavLink to="/catalog" onClick={() => setMobileOpen(false)}>🔍 Каталог</MobileNavLink>
+                  <MobileNavLink to="/cart" onClick={() => setMobileOpen(false)}>🛒 Корзина</MobileNavLink>
+                </nav>
+              </>
             )}
           </div>
         </div>

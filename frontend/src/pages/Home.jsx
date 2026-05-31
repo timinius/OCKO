@@ -49,9 +49,9 @@ export default function Home() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 20 }}>
             <img src="/logo-mark-mint.svg" alt="" style={{ width: 56, height: 56 }} />
-            <span style={{ color: 'white', fontWeight: 800, fontSize: 48, letterSpacing: '-0.035em', fontFamily: 'Onest, sans-serif', lineHeight: 1 }}>Флипп</span>
+            <span style={{ color: 'white', fontWeight: 800, fontSize: 48, letterSpacing: '-0.035em', fontFamily: 'Onest, sans-serif', lineHeight: 1 }}>Флип</span>
           </div>
-          <h1 style={{ fontSize: 38, fontWeight: 800, marginBottom: 16, letterSpacing: -1, lineHeight: 1.15, fontFamily: 'Onest, sans-serif' }}>
+          <h1 style={{ fontSize: 38, fontWeight: 800, marginBottom: 16, letterSpacing: -1, lineHeight: 1.15 }}>
             Покупай и продавай<br />
             <span style={{ color: 'var(--brand-mint)' }}>быстро и выгодно</span>
           </h1>
