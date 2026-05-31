@@ -29,6 +29,7 @@ export default function Product() {
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewError, setReviewError] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -268,9 +269,28 @@ export default function Product() {
               <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 12 }}>
                 📍 {product.seller_city} · На OCKO с {new Date(product.seller_since).getFullYear()}
               </div>
-              <Link to={`/seller/${product.seller_id}`} className="btn btn-ghost btn-sm" style={{ width: '100%' }}>
+              <Link to={`/seller/${product.seller_id}`} className="btn btn-ghost btn-sm" style={{ width: '100%', marginBottom: 8 }}>
                 Все объявления продавца
               </Link>
+              {user && user.id !== product.seller_id && (
+                <button
+                  disabled={chatLoading}
+                  onClick={async () => {
+                    if (!user) { navigate('/login'); return; }
+                    setChatLoading(true);
+                    try {
+                      const res = await api.post('/chat/conversations', { product_id: product.id, seller_id: product.seller_id });
+                      navigate(`/chats?conv=${res.data.id}`);
+                    } finally {
+                      setChatLoading(false);
+                    }
+                  }}
+                  className="btn btn-outline btn-sm"
+                  style={{ width: '100%' }}
+                >
+                  {chatLoading ? 'Открываем чат...' : '💬 Написать продавцу'}
+                </button>
+              )}
             </div>
           </div>
         </div>

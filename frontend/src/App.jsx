@@ -19,6 +19,7 @@ import Register from './pages/Register';
 import AddProduct from './pages/AddProduct';
 import EditProduct from './pages/EditProduct';
 import Favorites from './pages/Favorites';
+import Chats from './pages/Chats';
 import NotFound from './pages/NotFound';
 
 function AppInner() {
@@ -42,6 +43,7 @@ function AppInner() {
           <Route path="/sell" element={<AddProduct />} />
           <Route path="/edit/:id" element={<EditProduct />} />
           <Route path="/favorites" element={<Favorites />} />
+          <Route path="/chats" element={<Chats />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
