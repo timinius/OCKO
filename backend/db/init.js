@@ -20,7 +20,7 @@ function wrapStmt(stmt) {
 function getDB() {
   if (!db) {
     db = new _Database(DB_PATH);
-    db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
+    db.exec('PRAGMA busy_timeout = 10000; PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
     const _prepare = db.prepare.bind(db);
     db.prepare = (sql) => wrapStmt(_prepare(sql));
   }
