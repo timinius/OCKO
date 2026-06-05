@@ -36,36 +36,47 @@ export default function Home() {
     <div>
       {/* Hero */}
       <section style={{
-        background: 'linear-gradient(135deg, #1A2E1F 0%, #2D5A3D 60%, #3D7A52 100%)',
-        color: 'white', padding: '72px 20px 80px', textAlign: 'center', position: 'relative', overflow: 'hidden',
+        background: 'linear-gradient(145deg, #0F2318 0%, #1A3A27 45%, #243F2E 100%)',
+        color: 'white', padding: '80px 20px 88px', textAlign: 'center',
+        position: 'relative', overflow: 'hidden',
       }}>
-        {/* Декоративные круги */}
-        <div style={{ position: 'absolute', top: -80, right: -80, width: 320, height: 320, borderRadius: '50%', background: 'rgba(255,255,255,0.04)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: -60, left: -60, width: 240, height: 240, borderRadius: '50%', background: 'rgba(255,255,255,0.03)', pointerEvents: 'none' }} />
+        {/* Декоративные элементы */}
+        <div style={{ position: 'absolute', top: -120, right: -80, width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(142,211,168,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: -80, left: -60, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(54,133,90,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '40%', left: '10%', width: 180, height: 180, borderRadius: '50%', background: 'radial-gradient(circle, rgba(142,211,168,0.04) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
         <div className="container" style={{ position: 'relative' }}>
-          <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.1)', borderRadius: 20, padding: '6px 16px', fontSize: 13, marginBottom: 20, backdropFilter: 'blur(8px)' }}>
-            ✨ Тысячи товаров от проверенных продавцов
+          {/* Pill badge */}
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(142,211,168,0.12)', border: '1px solid rgba(142,211,168,0.2)', borderRadius: 100, padding: '6px 16px', fontSize: 13, marginBottom: 28, backdropFilter: 'blur(12px)' }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--brand-mint)', display: 'inline-block' }} />
+            Тысячи товаров от проверенных продавцов
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 20 }}>
-            <img src="/logo-mark-mint.svg" alt="" style={{ width: 56, height: 56 }} />
-            <span style={{ color: 'white', fontWeight: 800, fontSize: 48, letterSpacing: '-0.035em', fontFamily: 'Onest, sans-serif', lineHeight: 1 }}>Флип</span>
+
+          {/* Logo + name */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginBottom: 24 }}>
+            <img src="/logo-mark-mint.svg" alt="" style={{ width: 60, height: 60, filter: 'drop-shadow(0 0 24px rgba(142,211,168,0.4))' }} />
+            <span style={{ color: 'white', fontWeight: 800, fontSize: 52, letterSpacing: '-0.04em', fontFamily: 'Onest, sans-serif', lineHeight: 1 }}>Флип</span>
           </div>
-          <h1 style={{ fontSize: 38, fontWeight: 800, marginBottom: 16, letterSpacing: -1, lineHeight: 1.15 }}>
+
+          <h1 style={{ fontSize: 40, fontWeight: 800, marginBottom: 16, letterSpacing: -1, lineHeight: 1.12, maxWidth: 560, margin: '0 auto 16px' }}>
             Покупай и продавай<br />
             <span style={{ color: 'var(--brand-mint)' }}>быстро и выгодно</span>
           </h1>
-          <p style={{ fontSize: 17, opacity: 0.8, marginBottom: 40, maxWidth: 480, margin: '0 auto 40px', lineHeight: 1.6 }}>
-            Электроника, одежда, авто, недвижимость — всё в одном месте
+          <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.62)', marginBottom: 40, maxWidth: 420, margin: '0 auto 40px', lineHeight: 1.65 }}>
+            Электроника, одежда, авто — всё в одном месте
           </p>
 
-          <form onSubmit={handleSearch} style={{ display: 'flex', maxWidth: 580, margin: '0 auto 32px', borderRadius: 16, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.25)' }}>
+          {/* Search */}
+          <form onSubmit={handleSearch} style={{ display: 'flex', maxWidth: 600, margin: '0 auto 36px', borderRadius: 100, overflow: 'hidden', boxShadow: '0 12px 48px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.2)', background: 'white' }}>
+            <svg style={{ flexShrink: 0, margin: 'auto 0 auto 20px', opacity: 0.35 }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D1A11" strokeWidth="2.5">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
             <input type="text" value={searchVal} onChange={e => setSearchVal(e.target.value)}
               placeholder="Что ищете? iPhone, велосипед, диван..."
-              style={{ flex: 1, padding: '18px 22px', border: 'none', fontSize: 15, outline: 'none', color: 'var(--text)', minWidth: 0 }}
+              style={{ flex: 1, padding: '18px 16px', border: 'none', fontSize: 15, outline: 'none', color: 'var(--text)', background: 'transparent', minWidth: 0 }}
             />
             <button type="submit" className="hero-search-btn"
-              style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '18px 24px', fontWeight: 700, fontSize: 15, cursor: 'pointer', flexShrink: 0, transition: 'background 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+              style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '18px 28px', fontWeight: 700, fontSize: 15, cursor: 'pointer', flexShrink: 0, transition: 'background 0.2s', display: 'flex', alignItems: 'center', gap: 6, borderRadius: '0 100px 100px 0', margin: 4, borderRadius: 100 }}
               onMouseEnter={e => e.currentTarget.style.background = 'var(--primary-dark)'}
               onMouseLeave={e => e.currentTarget.style.background = 'var(--primary)'}
             >
@@ -74,10 +85,11 @@ export default function Home() {
             </button>
           </form>
 
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            {['Бесплатные объявления', 'Безопасные сделки', 'Доставка по России'].map(text => (
-              <span key={text} style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 20, padding: '7px 16px', fontSize: 13, backdropFilter: 'blur(4px)' }}>
-                ✓ {text}
+          {/* Feature pills */}
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+            {[['✓', 'Бесплатно'], ['✓', 'Безопасно'], ['✓', 'Доставка по России']].map(([icon, text]) => (
+              <span key={text} style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 100, padding: '7px 16px', fontSize: 13, color: 'rgba(255,255,255,0.75)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ color: 'var(--brand-mint)', fontWeight: 700 }}>{icon}</span> {text}
               </span>
             ))}
           </div>
@@ -85,23 +97,12 @@ export default function Home() {
       </section>
 
       {/* Categories */}
-      <section style={{ padding: '32px 0' }}>
+      <section style={{ padding: '40px 0' }}>
         <div className="container">
           <h2 className="section-title">Категории</h2>
           <div className="categories-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
             {CATEGORIES.map(cat => (
-              <Link key={cat.slug} to={`/catalog?category=${cat.slug}`}
-                style={{
-                  background: 'white', borderRadius: 'var(--radius-lg)', padding: '18px 12px',
-                  textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s', display: 'block',
-                  border: '1.5px solid var(--border)',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = 'var(--shadow-hover)'; e.currentTarget.style.borderColor = 'var(--primary)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--border)'; }}
-              >
-                <div style={{ fontSize: 32, marginBottom: 8 }}>{cat.icon}</div>
-                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)' }}>{cat.name}</div>
-              </Link>
+              <CategoryCard key={cat.slug} cat={cat} />
             ))}
           </div>
         </div>
@@ -123,15 +124,31 @@ export default function Home() {
       </section>
 
       {/* Banner CTA */}
-      <section style={{ background: 'linear-gradient(135deg, #1A2E1F 0%, #2D5A3D 100%)', padding: '48px 20px', color: 'white' }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 24 }}>
-          <div>
-            <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, letterSpacing: -0.5 }}>Начните продавать прямо сейчас</h2>
-            <p style={{ opacity: 0.75, fontSize: 15 }}>Бесплатное объявление — покупатель найдётся за 24 часа</p>
+      <section style={{ padding: '0 20px 48px' }}>
+        <div className="container">
+          <div style={{
+            background: 'linear-gradient(135deg, #0F2318 0%, #1D3D2A 60%, #2A5238 100%)',
+            borderRadius: 24, padding: '48px 48px', color: 'white', position: 'relative', overflow: 'hidden',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 24,
+          }}>
+            <div style={{ position: 'absolute', top: -60, right: 80, width: 260, height: 260, borderRadius: '50%', background: 'radial-gradient(circle, rgba(142,211,168,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand-mint)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10 }}>Продавцам</div>
+              <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, letterSpacing: -0.5, lineHeight: 1.2 }}>Начните продавать прямо сейчас</h2>
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 15, lineHeight: 1.6 }}>Бесплатное объявление — покупатель найдётся за 24 часа</p>
+            </div>
+            <Link to="/sell" style={{
+              background: 'white', color: 'var(--primary-dark)', fontWeight: 800, fontSize: 15,
+              padding: '16px 32px', borderRadius: 100, whiteSpace: 'nowrap', display: 'inline-flex',
+              alignItems: 'center', gap: 8, transition: 'all 0.2s', boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+              flexShrink: 0,
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.3)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)'; }}
+            >
+              Разместить объявление →
+            </Link>
           </div>
-          <Link to="/sell" className="btn btn-lg" style={{ background: 'white', color: 'var(--primary-dark)', fontWeight: 800, fontSize: 15, borderRadius: 14 }}>
-            Разместить объявление
-          </Link>
         </div>
       </section>
 
@@ -146,6 +163,33 @@ export default function Home() {
         </div>
       </section>
     </div>
+  );
+}
+
+function CategoryCard({ cat }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <Link to={`/catalog?category=${cat.slug}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: 'white', borderRadius: 16, padding: '20px 12px 16px',
+        textAlign: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
+        transform: hovered ? 'translateY(-4px)' : 'none',
+        boxShadow: hovered
+          ? '0 12px 36px rgba(54,133,90,0.18)'
+          : '0 1px 3px rgba(0,0,0,0.05), 0 2px 12px rgba(0,0,0,0.05)',
+        transition: 'transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease',
+      }}
+    >
+      <div style={{
+        width: 52, height: 52, borderRadius: 16, fontSize: 26,
+        background: hovered ? 'var(--primary-bg)' : '#F3F6F4',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        transition: 'background 0.2s',
+      }}>{cat.icon}</div>
+      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', lineHeight: 1.2 }}>{cat.name}</div>
+    </Link>
   );
 }
 
