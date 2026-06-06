@@ -20,6 +20,7 @@ export default function Profile() {
   const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
   const [saving, setSaving] = useState(false);
   const [savingPw, setSavingPw] = useState(false);
+  const [avatarLoading, setAvatarLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const [pwSuccess, setPwSuccess] = useState('');
@@ -51,6 +52,23 @@ export default function Profile() {
     }
   };
 
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarLoading(true); setError('');
+    try {
+      const formData = new FormData();
+      formData.append('avatar', file);
+      const res = await api.put('/auth/me/avatar', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      updateUser(res.data);
+    } catch {
+      setError('Ошибка загрузки фото');
+    } finally {
+      setAvatarLoading(false);
+      e.target.value = '';
+    }
+  };
+
   const handlePassword = async (e) => {
     e.preventDefault();
     if (pwForm.newPassword !== pwForm.confirmPassword) { setPwError('Пароли не совпадают'); return; }
@@ -74,8 +92,26 @@ export default function Profile() {
     <div className="page">
       <div className="container" style={{ maxWidth: 800 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 28 }}>
-          <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--green)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 24 }}>
-            {initials}
+          <div style={{ position: 'relative', flexShrink: 0 }}>
+            <div
+              onClick={() => document.getElementById('avatar-file-input').click()}
+              style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--green)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 24, overflow: 'hidden', cursor: 'pointer', position: 'relative' }}
+            >
+              {user.avatar
+                ? <img src={user.avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                : initials}
+              {avatarLoading && (
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: 'white' }}>...</div>
+              )}
+            </div>
+            <button
+              onClick={() => document.getElementById('avatar-file-input').click()}
+              title="Изменить фото"
+              style={{ position: 'absolute', bottom: 0, right: 0, width: 24, height: 24, background: 'var(--primary)', border: '2px solid white', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+            >
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <input id="avatar-file-input" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarUpload} />
           </div>
           <div>
             <h1 style={{ fontSize: 22, fontWeight: 700 }}>{user.name}</h1>

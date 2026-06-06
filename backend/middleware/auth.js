@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { getDB } = require('../db/init');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'ocko-secret-key-2024';
 
@@ -9,6 +10,7 @@ function authenticateToken(req, res, next) {
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) return res.status(403).json({ error: 'Недействительный токен' });
     req.user = user;
+    try { getDB().prepare('UPDATE users SET last_seen = CURRENT_TIMESTAMP WHERE id = ?').run(user.id); } catch(e) {}
     next();
   });
 }

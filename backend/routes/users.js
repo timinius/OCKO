@@ -6,7 +6,8 @@ const router = express.Router();
 router.get('/:id', (req, res) => {
   const db = getDB();
   const user = db.prepare(`
-    SELECT id, name, avatar, city, about, rating, reviews_count, created_at FROM users WHERE id = ?
+    SELECT id, name, avatar, city, about, rating, reviews_count, created_at,
+           account_type, company_name, company_inn, last_seen FROM users WHERE id = ?
   `).get(req.params.id);
   if (!user) return res.status(404).json({ error: 'Пользователь не найден' });
 

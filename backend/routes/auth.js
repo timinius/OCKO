@@ -1,8 +1,22 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const { getDB } = require('../db/init');
 const { authenticateToken, JWT_SECRET } = require('../middleware/auth');
+
+const uploadDir = path.join(__dirname, '..', 'uploads');
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+const avatarUpload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadDir),
+    filename: (req, file, cb) => cb(null, `avatar-${Date.now()}-${Math.random().toString(36).substr(2,6)}${path.extname(file.originalname)}`),
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => file.mimetype.startsWith('image/') ? cb(null, true) : cb(new Error('Только изображения')),
+});
 
 const router = express.Router();
 
@@ -63,6 +77,15 @@ router.put('/me', authenticateToken, (req, res) => {
   const db = getDB();
   db.prepare('UPDATE users SET name = ?, phone = ?, city = ?, about = ?, company_name = ?, company_inn = ? WHERE id = ?')
     .run(name, phone, city, about, company_name || null, company_inn || null, req.user.id);
+  const user = db.prepare('SELECT id, email, name, phone, avatar, city, about, rating, reviews_count, created_at, account_type, company_name, company_inn FROM users WHERE id = ?').get(req.user.id);
+  res.json(user);
+});
+
+router.put('/me/avatar', authenticateToken, avatarUpload.single('avatar'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'Файл не загружен' });
+  const db = getDB();
+  const avatarUrl = `/uploads/${req.file.filename}`;
+  db.prepare('UPDATE users SET avatar = ? WHERE id = ?').run(avatarUrl, req.user.id);
   const user = db.prepare('SELECT id, email, name, phone, avatar, city, about, rating, reviews_count, created_at, account_type, company_name, company_inn FROM users WHERE id = ?').get(req.user.id);
   res.json(user);
 });

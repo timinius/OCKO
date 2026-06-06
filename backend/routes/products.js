@@ -34,7 +34,7 @@ router.get('/', optionalAuth, (req, res) => {
   let where = ['p.status = ?'];
   let params = [defaultStatus];
 
-  if (search) { where.push("(LOWER(p.title) LIKE ? OR LOWER(COALESCE(p.description,'')) LIKE ?)"); params.push(`%${search.toLowerCase()}%`); params.push(`%${search.toLowerCase()}%`); }
+  if (search) { where.push("(JS_LOWER(p.title) LIKE ? OR JS_LOWER(COALESCE(p.description,'')) LIKE ?)"); params.push(`%${search.toLowerCase()}%`); params.push(`%${search.toLowerCase()}%`); }
   if (category) { where.push("c.slug = ?"); params.push(category); }
   if (min_price) { where.push("p.price >= ?"); params.push(parseFloat(min_price)); }
   if (max_price) { where.push("p.price <= ?"); params.push(parseFloat(max_price)); }

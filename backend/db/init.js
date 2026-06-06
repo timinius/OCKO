@@ -33,6 +33,8 @@ function getDB() {
     clearStaleLock();
     db = new _Database(DB_PATH);
     db.exec('PRAGMA foreign_keys = ON;');
+    // JS_LOWER: case-insensitive search for Cyrillic (SQLite built-in LOWER() ignores non-ASCII)
+    try { db.function('JS_LOWER', str => (str == null ? null : String(str).toLowerCase())); } catch(e) {}
     const _prepare = db.prepare.bind(db);
     db.prepare = (sql) => wrapStmt(_prepare(sql));
   }
@@ -173,6 +175,7 @@ function initDB() {
   try { db.exec("ALTER TABLE users ADD COLUMN account_type TEXT DEFAULT 'personal'"); } catch(e) {}
   try { db.exec("ALTER TABLE users ADD COLUMN company_name TEXT"); } catch(e) {}
   try { db.exec("ALTER TABLE users ADD COLUMN company_inn TEXT"); } catch(e) {}
+  try { db.exec("ALTER TABLE users ADD COLUMN last_seen DATETIME"); } catch(e) {}
 
   const catCount = db.prepare('SELECT COUNT(*) as count FROM categories').get();
   if (catCount.count === 0) {

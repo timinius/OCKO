@@ -14,10 +14,14 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [unreadChats, setUnreadChats] = useState(0);
   const menuRef = useRef(null);
+  const inputFocusedRef = useRef(false);
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    setSearch(params.get('search') || '');
+    // Don't override input while user is actively typing
+    if (!inputFocusedRef.current) {
+      const params = new URLSearchParams(location.search);
+      setSearch(params.get('search') || '');
+    }
   }, [location.search]);
 
   useEffect(() => {
@@ -38,10 +42,16 @@ export default function Header() {
 
   useEffect(() => {
     if (!user) return;
-    const load = () => import('../api/client').then(m => m.default.get('/chat/unread').then(r => setUnreadChats(r.data.count)));
+    const load = () => import('../api/client').then(m => m.default.get('/chat/unread').then(r => setUnreadChats(r.data.count)).catch(() => {}));
     load();
     const interval = setInterval(load, 30000);
-    return () => clearInterval(interval);
+    // Refresh immediately when messages are read in Chats page
+    const onRead = () => setTimeout(load, 400);
+    window.addEventListener('chatMessagesRead', onRead);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('chatMessagesRead', onRead);
+    };
   }, [user]);
 
   const handleSearch = (e) => {
@@ -74,8 +84,8 @@ export default function Header() {
               </svg>
               <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Поиск товаров..."
                 style={{ width: '100%', padding: '9px 12px 9px 38px', background: 'rgba(255,255,255,0.1)', border: '1.5px solid rgba(255,255,255,0.15)', borderRadius: '10px 0 0 10px', fontSize: 13, outline: 'none', color: 'white', transition: 'all 0.2s' }}
-                onFocus={e => { e.target.style.background = 'rgba(255,255,255,0.16)'; e.target.style.borderColor = 'rgba(255,255,255,0.4)'; }}
-                onBlur={e => { e.target.style.background = 'rgba(255,255,255,0.1)'; e.target.style.borderColor = 'rgba(255,255,255,0.15)'; }}
+                onFocus={e => { inputFocusedRef.current = true; e.target.style.background = 'rgba(255,255,255,0.16)'; e.target.style.borderColor = 'rgba(255,255,255,0.4)'; }}
+                onBlur={e => { inputFocusedRef.current = false; e.target.style.background = 'rgba(255,255,255,0.1)'; e.target.style.borderColor = 'rgba(255,255,255,0.15)'; }}
               />
             </div>
             <button type="submit" style={{ background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '0 10px 10px 0', padding: '9px 16px', fontWeight: 700, cursor: 'pointer', fontSize: 13, flexShrink: 0, transition: 'background 0.2s' }}

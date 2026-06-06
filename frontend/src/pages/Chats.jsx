@@ -14,6 +14,32 @@ function formatTime(dt) {
   return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
 }
 
+function parseUTCDate(str) {
+  if (!str) return null;
+  // SQLite stores CURRENT_TIMESTAMP as 'YYYY-MM-DD HH:MM:SS' without TZ — treat as UTC
+  const s = str.includes('T') ? str : str.replace(' ', 'T') + 'Z';
+  return new Date(s);
+}
+
+function getOnlineStatus(lastSeen) {
+  if (!lastSeen) return null;
+  const diff = Date.now() - parseUTCDate(lastSeen).getTime();
+  if (diff < 5 * 60 * 1000) return { text: 'онлайн', online: true };
+  if (diff < 60 * 60 * 1000) return { text: 'был(а) недавно', online: false };
+  return null;
+}
+
+function Initials({ name, avatar, size = 44, radius = '50%' }) {
+  const initials = name ? name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : '?';
+  return (
+    <div style={{ width: size, height: size, borderRadius: radius, background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: size * 0.36, overflow: 'hidden', flexShrink: 0 }}>
+      {avatar
+        ? <img src={avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
+        : initials}
+    </div>
+  );
+}
+
 export default function Chats() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -44,12 +70,12 @@ export default function Chats() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Поллинг новых сообщений каждые 5 сек
+  // Poll new messages every 5 sec while dialog is open
   useEffect(() => {
     if (!active) return;
     const interval = setInterval(() => loadMessages(active.id, false), 5000);
     return () => clearInterval(interval);
-  }, [active]);
+  }, [active?.id]);
 
   async function loadConversations() {
     try {
@@ -62,9 +88,20 @@ export default function Chats() {
 
   async function loadMessages(convId, scroll = true) {
     const res = await api.get(`/chat/conversations/${convId}`);
-    setActive(res.data);
-    setMessages(res.data.messages || []);
-    setConversations(prev => prev.map(c => c.id === convId ? { ...c, unread_count: 0 } : c));
+    const data = res.data;
+    setActive(data);
+    const msgs = data.messages || [];
+    setMessages(msgs);
+    // Update sidebar: clear unread + update last_message
+    const lastMsg = msgs[msgs.length - 1];
+    setConversations(prev => prev.map(c => c.id === convId ? {
+      ...c,
+      unread_count: 0,
+      last_message: lastMsg?.text ?? c.last_message,
+      last_message_at: lastMsg?.created_at ?? c.last_message_at,
+    } : c));
+    // Tell Header to refresh unread badge
+    window.dispatchEvent(new CustomEvent('chatMessagesRead'));
     if (scroll) setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
   }
 
@@ -75,11 +112,16 @@ export default function Chats() {
   async function send() {
     if (!input.trim() || sending || !active) return;
     setSending(true);
+    const msgText = input.trim();
     try {
-      const res = await api.post(`/chat/conversations/${active.id}/messages`, { text: input.trim() });
+      const res = await api.post(`/chat/conversations/${active.id}/messages`, { text: msgText });
       setMessages(prev => [...prev, res.data]);
       setInput('');
-      loadConversations();
+      // Update sidebar last_message immediately (no need for full reload)
+      setConversations(prev => prev.map(c => c.id === active.id
+        ? { ...c, last_message: msgText, last_message_at: res.data.created_at || new Date().toISOString() }
+        : c
+      ));
     } finally {
       setSending(false);
     }
@@ -87,9 +129,11 @@ export default function Chats() {
 
   if (!user) return null;
 
-  const otherName = active
-    ? (user.id === active.buyer_id ? active.seller_name : active.buyer_name)
-    : null;
+  const isMe = active ? user.id === active.buyer_id : false;
+  const otherName = active ? (isMe ? active.seller_name : active.buyer_name) : null;
+  const otherAvatar = active ? (isMe ? active.seller_avatar : active.buyer_avatar) : null;
+  const otherLastSeen = active ? (isMe ? active.seller_last_seen : active.buyer_last_seen) : null;
+  const onlineStatus = getOnlineStatus(otherLastSeen);
 
   return (
     <div style={{ display: 'flex', flex: 1, overflow: 'hidden', justifyContent: 'center' }}>
@@ -113,36 +157,33 @@ export default function Chats() {
               <p style={{ fontSize: 13 }}>Напишите продавцу со страницы товара</p>
             </div>
           ) : conversations.map(conv => {
-            const isMe = user.id === conv.buyer_id;
-            const other = isMe ? conv.seller_name : conv.buyer_name;
+            const convIsMe = user.id === conv.buyer_id;
+            const other = convIsMe ? conv.seller_name : conv.buyer_name;
+            const otherAv = convIsMe ? conv.seller_avatar : conv.buyer_avatar;
             const isActive = active?.id === conv.id;
             return (
               <div key={conv.id} onClick={() => openConv(conv)}
                 style={{
-                  display: 'flex', gap: 12, padding: '14px 20px', cursor: 'pointer', borderBottom: '1px solid var(--border)',
+                  display: 'flex', gap: 12, padding: '12px 16px', cursor: 'pointer', borderBottom: '1px solid var(--border)',
                   background: isActive ? 'var(--primary-bg)' : 'white', transition: 'background 0.15s',
                   borderLeft: isActive ? '3px solid var(--primary)' : '3px solid transparent',
                 }}
                 onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = '#f8faf8'; }}
                 onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'white'; }}
               >
-                {/* Фото товара */}
-                <div style={{ width: 52, height: 52, borderRadius: 10, overflow: 'hidden', flexShrink: 0, background: 'var(--bg)', border: '1px solid var(--border)' }}>
-                  {conv.product_image
-                    ? <img src={conv.product_image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display='none'} />
-                    : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>📦</div>
-                  }
-                </div>
+                {/* Аватар собеседника */}
+                <Initials name={other} avatar={otherAv} size={46} />
+
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 2 }}>
                     <span style={{ fontWeight: 700, fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 140 }}>{other}</span>
                     <span style={{ fontSize: 11, color: 'var(--text-secondary)', flexShrink: 0, marginLeft: 4 }}>{formatTime(conv.last_message_at)}</span>
                   </div>
-                  <div style={{ fontSize: 12, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 3 }}>
-                    {conv.product_title}
+                  <div style={{ fontSize: 11, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 2 }}>
+                    📦 {conv.product_title}
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: 13, color: conv.last_message ? 'var(--text)' : 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 160 }}>
+                    <span style={{ fontSize: 12, color: conv.last_message ? 'var(--text)' : 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 160 }}>
                       {conv.last_message || 'Нет сообщений'}
                     </span>
                     {conv.unread_count > 0 && (
@@ -161,26 +202,40 @@ export default function Chats() {
         {active ? (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
             {/* Шапка диалога */}
-            <div style={{ background: 'white', borderBottom: '1px solid var(--border)', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 14 }}>
-              <div style={{ width: 44, height: 44, borderRadius: 10, overflow: 'hidden', flexShrink: 0, background: 'var(--bg)', border: '1px solid var(--border)' }}>
-                {active.product_image
-                  ? <img src={active.product_image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display='none'} />
-                  : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>📦</div>
-                }
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 700, fontSize: 15 }}>{otherName}</div>
-                <div style={{ fontSize: 12, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  По товару: <span style={{ color: 'var(--primary)', fontWeight: 600 }}>{active.product_title}</span>
-                  {active.product_price && <span style={{ color: 'var(--accent)', marginLeft: 8, fontWeight: 700 }}>{new Intl.NumberFormat('ru-RU').format(active.product_price)} ₽</span>}
+            <div style={{ background: 'white', borderBottom: '1px solid var(--border)', padding: '12px 16px' }}>
+              {/* Строка 1: аватар + имя собеседника + статус онлайн */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
+                <div style={{ position: 'relative', flexShrink: 0 }}>
+                  <Initials name={otherName} avatar={otherAvatar} size={44} />
+                  {onlineStatus?.online && (
+                    <div style={{ position: 'absolute', bottom: 1, right: 1, width: 12, height: 12, background: '#22c55e', border: '2px solid white', borderRadius: '50%' }} />
+                  )}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)' }}>{otherName}</div>
+                  {onlineStatus && (
+                    <div style={{ fontSize: 12, color: onlineStatus.online ? '#16a34a' : 'var(--text-secondary)', marginTop: 1 }}>
+                      {onlineStatus.text}
+                    </div>
+                  )}
                 </div>
               </div>
+              {/* Строка 2: карточка товара */}
               <Link to={`/product/${active.product_id}`}
-                style={{ flexShrink: 0, background: 'var(--primary-bg)', color: 'var(--primary)', border: '1.5px solid var(--primary)', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap', transition: 'all 0.15s' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'var(--primary)'; e.currentTarget.style.color = 'white'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'var(--primary-bg)'; e.currentTarget.style.color = 'var(--primary)'; }}
+                style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', background: 'var(--bg)', borderRadius: 10, textDecoration: 'none', transition: 'background 0.15s' }}
+                onMouseEnter={e => e.currentTarget.style.background = '#e8f0ea'}
+                onMouseLeave={e => e.currentTarget.style.background = 'var(--bg)'}
               >
-                К товару →
+                <div style={{ width: 36, height: 36, borderRadius: 8, overflow: 'hidden', background: '#ddd', flexShrink: 0 }}>
+                  {active.product_image
+                    ? <img src={active.product_image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display = 'none'} />
+                    : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>📦</div>}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{active.product_title}</div>
+                  {active.product_price && <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{new Intl.NumberFormat('ru-RU').format(active.product_price)} ₽</div>}
+                </div>
+                <span style={{ fontSize: 11, color: 'var(--primary)', fontWeight: 700, flexShrink: 0 }}>К товару →</span>
               </Link>
             </div>
 

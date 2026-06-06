@@ -33,8 +33,8 @@ router.get('/conversations', authenticateToken, (req, res) => {
   const convs = db.prepare(`
     SELECT
       c.id, c.buyer_id, c.seller_id, c.product_id, c.created_at,
-      buyer.name  AS buyer_name,
-      seller.name AS seller_name,
+      buyer.name  AS buyer_name, buyer.avatar AS buyer_avatar, buyer.last_seen AS buyer_last_seen,
+      seller.name AS seller_name, seller.avatar AS seller_avatar, seller.last_seen AS seller_last_seen,
       p.title     AS product_title,
       (SELECT url FROM product_images WHERE product_id = p.id AND is_primary=1 LIMIT 1) AS product_image,
       p.price     AS product_price,
@@ -60,7 +60,8 @@ router.get('/conversations/:id', authenticateToken, (req, res) => {
 
   const conv = db.prepare(`
     SELECT c.*,
-      buyer.name AS buyer_name, seller.name AS seller_name,
+      buyer.name AS buyer_name, buyer.avatar AS buyer_avatar, buyer.last_seen AS buyer_last_seen,
+      seller.name AS seller_name, seller.avatar AS seller_avatar, seller.last_seen AS seller_last_seen,
       p.title AS product_title, p.price AS product_price, p.status AS product_status,
       (SELECT url FROM product_images WHERE product_id=p.id AND is_primary=1 LIMIT 1) AS product_image
     FROM conversations c
