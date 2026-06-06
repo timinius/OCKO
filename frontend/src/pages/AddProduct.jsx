@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/client';
 import { useAuth } from '../contexts/AuthContext';
@@ -8,10 +8,10 @@ export default function AddProduct() {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [form, setForm] = useState({ title: '', description: '', price: '', category_id: '', condition: 'new', city: user?.city || 'Москва', stock: 1 });
-  const [images, setImages] = useState([]);
-  const [previews, setPreviews] = useState([]);
+  const [photoItems, setPhotoItems] = useState([]); // [{src, file, key}]
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const dragIdx = useRef(null);
 
   useEffect(() => {
     api.get('/categories').then(r => setCategories(r.data));
@@ -26,10 +26,31 @@ export default function AddProduct() {
     </div></div>
   );
 
-  const handleImages = (e) => {
+  const addPhotos = (e) => {
     const files = Array.from(e.target.files);
-    setImages(files);
-    setPreviews(files.map(f => URL.createObjectURL(f)));
+    const newItems = files.map(f => ({ src: URL.createObjectURL(f), file: f, key: `${Date.now()}-${Math.random()}` }));
+    setPhotoItems(prev => [...prev, ...newItems].slice(0, 10));
+    e.target.value = '';
+  };
+
+  const removePhoto = (key) => {
+    setPhotoItems(prev => {
+      const item = prev.find(p => p.key === key);
+      if (item?.file) URL.revokeObjectURL(item.src);
+      return prev.filter(p => p.key !== key);
+    });
+  };
+
+  const handleDragOver = (e, targetIdx) => {
+    e.preventDefault();
+    if (dragIdx.current === null || dragIdx.current === targetIdx) return;
+    setPhotoItems(prev => {
+      const arr = [...prev];
+      const [moved] = arr.splice(dragIdx.current, 1);
+      arr.splice(targetIdx, 0, moved);
+      dragIdx.current = targetIdx;
+      return arr;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -40,7 +61,7 @@ export default function AddProduct() {
     try {
       const formData = new FormData();
       Object.entries(form).forEach(([k, v]) => formData.append(k, v));
-      images.forEach(img => formData.append('images', img));
+      photoItems.forEach(item => formData.append('images', item.file));
       const res = await api.post('/products', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       navigate(`/product/${res.data.id}`);
     } catch (e) {
@@ -65,22 +86,39 @@ export default function AddProduct() {
           <div className="card" style={{ padding: 24, marginBottom: 16 }}>
             <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>📷 Фотографии</h2>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
-              {previews.map((src, i) => (
-                <div key={i} style={{ position: 'relative' }}>
-                  <img src={src} alt="" style={{ width: 90, height: 80, objectFit: 'cover', borderRadius: 8, border: i === 0 ? '2px solid var(--red)' : '2px solid var(--border)' }} />
-                  {i === 0 && <span style={{ position: 'absolute', bottom: 2, left: 2, fontSize: 10, background: 'var(--red)', color: 'white', padding: '1px 5px', borderRadius: 4 }}>Главная</span>}
+              {photoItems.map((item, i) => (
+                <div key={item.key}
+                  draggable
+                  onDragStart={() => { dragIdx.current = i; }}
+                  onDragOver={e => handleDragOver(e, i)}
+                  onDragEnd={() => { dragIdx.current = null; }}
+                  style={{ position: 'relative', width: 120, height: 110, borderRadius: 10, overflow: 'hidden', border: i === 0 ? '2.5px solid var(--primary)' : '2px solid var(--border)', cursor: 'grab', flexShrink: 0 }}
+                >
+                  <img src={item.src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  {i === 0 && (
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'var(--primary)', color: 'white', fontSize: 10, fontWeight: 700, textAlign: 'center', padding: '3px 0', letterSpacing: '0.04em' }}>
+                      ГЛАВНАЯ
+                    </div>
+                  )}
+                  <button type="button" onClick={() => removePhoto(item.key)}
+                    style={{ position: 'absolute', top: 5, right: 5, width: 22, height: 22, background: 'rgba(0,0,0,0.55)', border: 'none', borderRadius: '50%', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, lineHeight: 1, fontWeight: 700 }}>
+                    ×
+                  </button>
+                  <div style={{ position: 'absolute', top: 5, left: 5, color: 'white', fontSize: 13, opacity: 0.75, cursor: 'grab', lineHeight: 1 }}>⠿</div>
                 </div>
               ))}
-              <label style={{ width: 90, height: 80, border: '2px dashed var(--border)', borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 12, gap: 4, transition: 'border-color 0.15s' }}
-                onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--red)'}
-                onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
-              >
-                <span style={{ fontSize: 24 }}>+</span>
-                <span>Фото</span>
-                <input type="file" multiple accept="image/*" onChange={handleImages} style={{ display: 'none' }} />
-              </label>
+              {photoItems.length < 10 && (
+                <label style={{ width: 120, height: 110, border: '2px dashed var(--border)', borderRadius: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 12, gap: 6, transition: 'border-color 0.15s, color 0.15s', flexShrink: 0 }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.color = 'var(--primary)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+                >
+                  <span style={{ fontSize: 28, lineHeight: 1 }}>+</span>
+                  <span>{photoItems.length === 0 ? 'Добавить фото' : 'Ещё фото'}</span>
+                  <input type="file" multiple accept="image/*" onChange={addPhotos} style={{ display: 'none' }} />
+                </label>
+              )}
             </div>
-            <div className="form-hint">Первое фото — главное. До 10 фотографий, каждая до 10 МБ</div>
+            <div className="form-hint">Первое фото — главное. Перетащите для сортировки. До 10 фото</div>
           </div>
 
           {/* Main info */}

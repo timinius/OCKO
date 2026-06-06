@@ -135,7 +135,35 @@ router.put('/:id', authenticateToken, upload.array('images', 10), (req, res) => 
     condition = ?, city = ?, stock = ?, status = ? WHERE id = ?
   `).run(title, description, parseFloat(price), category_id, condition, city, parseInt(stock), status || 'active', product.id);
 
-  if (req.files && req.files.length > 0) {
+  // photo_order = JSON array where each item is either a kept existing URL or 'new'
+  // 'new' items map to req.files in order; first item in array = primary photo
+  const photoOrder = (() => {
+    try { return req.body.photo_order ? JSON.parse(req.body.photo_order) : null; } catch { return null; }
+  })();
+
+  if (photoOrder !== null) {
+    const keepUrls = photoOrder.filter(x => x !== 'new');
+    // Delete images not in keep list
+    if (keepUrls.length > 0) {
+      const placeholders = keepUrls.map(() => '?').join(',');
+      db.prepare(`DELETE FROM product_images WHERE product_id = ? AND url NOT IN (${placeholders})`).run(product.id, ...keepUrls);
+    } else {
+      db.prepare('DELETE FROM product_images WHERE product_id = ?').run(product.id);
+    }
+    // Reset primary flags
+    db.prepare('UPDATE product_images SET is_primary = 0 WHERE product_id = ?').run(product.id);
+    // Process order: set primary and insert new files
+    const insertImage = db.prepare('INSERT INTO product_images (product_id, url, is_primary) VALUES (?, ?, ?)');
+    let newFileIdx = 0;
+    photoOrder.forEach((item, i) => {
+      if (item === 'new') {
+        const file = req.files?.[newFileIdx++];
+        if (file) insertImage.run(product.id, `/uploads/${file.filename}`, i === 0 ? 1 : 0);
+      } else if (i === 0) {
+        db.prepare('UPDATE product_images SET is_primary = 1 WHERE product_id = ? AND url = ?').run(product.id, item);
+      }
+    });
+  } else if (req.files && req.files.length > 0) {
     db.prepare('DELETE FROM product_images WHERE product_id = ?').run(product.id);
     const insertImage = db.prepare('INSERT INTO product_images (product_id, url, is_primary) VALUES (?, ?, ?)');
     req.files.forEach((file, i) => insertImage.run(product.id, `/uploads/${file.filename}`, i === 0 ? 1 : 0));
