@@ -26,11 +26,13 @@ function withImages(product, db) {
 
 router.get('/', optionalAuth, (req, res) => {
   const db = getDB();
-  const { search, category, min_price, max_price, condition, city, sort = 'new', page = 1, limit = 20, seller_id } = req.query;
+  const { search, category, min_price, max_price, condition, city, sort = 'new', page = 1, limit = 20, seller_id, seller_type, status: statusFilter } = req.query;
   const offset = (parseInt(page) - 1) * parseInt(limit);
 
+  // Если продавец смотрит свои товары — показываем все статусы, иначе только active
+  const defaultStatus = statusFilter || 'active';
   let where = ['p.status = ?'];
-  let params = ['active'];
+  let params = [defaultStatus];
 
   if (search) { where.push("(LOWER(p.title) LIKE ? OR LOWER(COALESCE(p.description,'')) LIKE ?)"); params.push(`%${search.toLowerCase()}%`); params.push(`%${search.toLowerCase()}%`); }
   if (category) { where.push("c.slug = ?"); params.push(category); }
@@ -39,6 +41,8 @@ router.get('/', optionalAuth, (req, res) => {
   if (condition) { where.push("p.condition = ?"); params.push(condition); }
   if (city) { where.push("p.city LIKE ?"); params.push(`%${city}%`); }
   if (seller_id) { where.push("p.seller_id = ?"); params.push(parseInt(seller_id)); }
+  if (seller_type === 'company') { where.push("u.account_type = 'company'"); }
+  if (seller_type === 'personal') { where.push("(u.account_type IS NULL OR u.account_type = 'personal')"); }
 
   const orderMap = { new: 'p.created_at DESC', price_asc: 'p.price ASC', price_desc: 'p.price DESC', popular: 'p.views DESC' };
   const orderBy = orderMap[sort] || 'p.created_at DESC';
@@ -47,6 +51,7 @@ router.get('/', optionalAuth, (req, res) => {
   const countRow = db.prepare(`
     SELECT COUNT(*) as total FROM products p
     LEFT JOIN categories c ON p.category_id = c.id
+    LEFT JOIN users u ON p.seller_id = u.id
     WHERE ${whereStr}
   `).get(...params);
 
@@ -138,6 +143,18 @@ router.put('/:id', authenticateToken, upload.array('images', 10), (req, res) => 
 
   const updated = db.prepare('SELECT * FROM products WHERE id = ?').get(product.id);
   res.json(withImages(updated, db));
+});
+
+router.patch('/:id/status', authenticateToken, (req, res) => {
+  const { status } = req.body;
+  if (!['active', 'sold', 'archived'].includes(status)) {
+    return res.status(400).json({ error: 'Неверный статус' });
+  }
+  const db = getDB();
+  const product = db.prepare('SELECT * FROM products WHERE id = ? AND seller_id = ?').get(req.params.id, req.user.id);
+  if (!product) return res.status(404).json({ error: 'Товар не найден' });
+  db.prepare('UPDATE products SET status = ? WHERE id = ?').run(status, product.id);
+  res.json({ status });
 });
 
 router.delete('/:id', authenticateToken, (req, res) => {

@@ -112,7 +112,13 @@ export default function Header() {
                       <div style={{ fontWeight: 700, color: 'var(--text)', fontSize: 14 }}>{user.name}</div>
                       <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{user.email}</div>
                     </div>
-                    {[{ to: '/profile', label: '👤 Мой профиль' }, { to: '/profile/listings', label: '📦 Мои объявления' }, { to: '/orders', label: '🛍️ Мои заказы' }, { to: '/favorites', label: '♡ Избранное' }].map(item => (
+                    {[
+                      { to: '/profile', label: '👤 Мой профиль' },
+                      ...(user.account_type === 'company' ? [{ to: '/dashboard', label: '📊 Дашборд' }] : []),
+                      { to: '/profile/listings', label: '📦 Мои объявления' },
+                      { to: '/orders', label: '🛍️ Мои заказы' },
+                      { to: '/favorites', label: '♡ Избранное' },
+                    ].map(item => (
                       <Link key={item.to} to={item.to} onClick={() => setMenuOpen(false)}
                         style={{ display: 'block', padding: '11px 18px', color: 'var(--text)', fontSize: 13, fontWeight: 500, transition: 'background 0.15s' }}
                         onMouseEnter={e => e.currentTarget.style.background = 'var(--primary-bg)'}
@@ -197,6 +203,9 @@ export default function Header() {
                   <MobileNavLink to="/catalog" onClick={() => setMobileOpen(false)}>🔍 Каталог</MobileNavLink>
                   <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '8px 20px' }}/>
                   <MobileNavLink to="/profile" onClick={() => setMobileOpen(false)}>👤 Профиль</MobileNavLink>
+                  {user.account_type === 'company' && (
+                    <MobileNavLink to="/dashboard" onClick={() => setMobileOpen(false)} accent>📊 Дашборд магазина</MobileNavLink>
+                  )}
                   <MobileNavLink to="/profile/listings" onClick={() => setMobileOpen(false)}>📦 Мои объявления</MobileNavLink>
                   <MobileNavLink to="/orders" onClick={() => setMobileOpen(false)}>🛍️ Мои заказы</MobileNavLink>
                   <MobileNavLink to="/favorites" onClick={() => setMobileOpen(false)}>♡ Избранное</MobileNavLink>

@@ -30,6 +30,7 @@ export default function Product() {
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewError, setReviewError] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
+  const [statusLoading, setStatusLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -229,26 +230,81 @@ export default function Product() {
               <h1 style={{ fontSize: 18, fontWeight: 700, lineHeight: 1.3, marginBottom: 12 }}>{product.title}</h1>
               <div className="price price-lg" style={{ marginBottom: 20 }}>{formatPrice(product.price)}</div>
 
-              {product.status !== 'active' ? (
-                <div className="alert alert-error">Товар недоступен</div>
-              ) : user?.id === product.seller_id ? (
-                <div>
-                  <div className="alert" style={{ background: '#EBF3EC', color: 'var(--green-dark)', marginBottom: 8 }}>Это ваше объявление</div>
-                  <Link to={`/edit/${product.id}`} className="btn btn-outline" style={{ width: '100%' }}>Редактировать</Link>
-                </div>
-              ) : (
-                <>
-                  <button onClick={handleCart} disabled={cartLoading} className="btn btn-primary btn-lg" style={{ width: '100%', marginBottom: 10 }}>
-                    {cartAdded ? '✓ Добавлено в корзину' : cartLoading ? 'Добавление...' : '🛒 В корзину'}
-                  </button>
-                  <button onClick={() => { handleCart(); navigate('/cart'); }} className="btn btn-secondary btn-lg" style={{ width: '100%', marginBottom: 10 }}>
-                    Купить сейчас
-                  </button>
-                  <button onClick={handleFavorite} className={`btn btn-ghost`} style={{ width: '100%' }}>
-                    {favorited ? '♥ В избранном' : '♡ В избранное'}
-                  </button>
-                </>
-              )}
+              {(() => {
+                const isCompany = product.seller_account_type === 'company';
+                const isSold = product.status === 'sold';
+                const isMine = user?.id === product.seller_id;
+
+                if (isSold) return (
+                  <div>
+                    <div style={{ textAlign: 'center', padding: '16px 0', marginBottom: 8 }}>
+                      <span style={{ fontSize: 36 }}>📦</span>
+                      <div style={{ fontWeight: 700, fontSize: 16, marginTop: 8, marginBottom: 4 }}>Товар продан</div>
+                      <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Этот товар уже нашёл своего покупателя</div>
+                    </div>
+                    {isMine && (
+                      <button disabled={statusLoading} className="btn btn-ghost" style={{ width: '100%' }}
+                        onClick={async () => {
+                          setStatusLoading(true);
+                          try { const r = await api.patch(`/products/${product.id}/status`, { status: 'active' }); setProduct(p => ({ ...p, status: r.data.status })); }
+                          finally { setStatusLoading(false); }
+                        }}>
+                        {statusLoading ? '...' : '↩ Снова в продажу'}
+                      </button>
+                    )}
+                  </div>
+                );
+
+                if (product.status !== 'active') return (
+                  <div className="alert alert-error">Товар недоступен</div>
+                );
+
+                if (isMine) return (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <div className="alert" style={{ background: '#EBF3EC', color: 'var(--green-dark)', marginBottom: 0 }}>Это ваше объявление</div>
+                    <Link to={`/edit/${product.id}`} className="btn btn-outline" style={{ width: '100%' }}>Редактировать</Link>
+                    {!isCompany && (
+                      <button disabled={statusLoading} className="btn btn-ghost" style={{ width: '100%', color: 'var(--text-secondary)' }}
+                        onClick={async () => {
+                          if (!confirm('Отметить товар как проданный?')) return;
+                          setStatusLoading(true);
+                          try { const r = await api.patch(`/products/${product.id}/status`, { status: 'sold' }); setProduct(p => ({ ...p, status: r.data.status })); }
+                          finally { setStatusLoading(false); }
+                        }}>
+                        {statusLoading ? '...' : '✓ Отметить как продано'}
+                      </button>
+                    )}
+                  </div>
+                );
+
+                return (
+                  <>
+                    {isCompany ? (
+                      <>
+                        <button onClick={handleCart} disabled={cartLoading} className="btn btn-primary btn-lg" style={{ width: '100%', marginBottom: 10 }}>
+                          {cartAdded ? '✓ Добавлено в корзину' : cartLoading ? 'Добавление...' : '🛒 В корзину'}
+                        </button>
+                        <button onClick={() => { handleCart(); navigate('/cart'); }} className="btn btn-secondary btn-lg" style={{ width: '100%', marginBottom: 10 }}>
+                          Купить сейчас
+                        </button>
+                      </>
+                    ) : (
+                      <button disabled={chatLoading} className="btn btn-primary btn-lg" style={{ width: '100%', marginBottom: 10 }}
+                        onClick={async () => {
+                          if (!user) { navigate('/login'); return; }
+                          setChatLoading(true);
+                          try { const r = await api.post('/chat/conversations', { product_id: product.id, seller_id: product.seller_id }); navigate(`/chats?conv=${r.data.id}`); }
+                          finally { setChatLoading(false); }
+                        }}>
+                        {chatLoading ? 'Открываем чат...' : '💬 Написать продавцу'}
+                      </button>
+                    )}
+                    <button onClick={handleFavorite} className="btn btn-ghost" style={{ width: '100%' }}>
+                      {favorited ? '♥ В избранном' : '♡ В избранное'}
+                    </button>
+                  </>
+                );
+              })()}
             </div>
 
             {/* Seller card */}
@@ -286,7 +342,7 @@ export default function Product() {
               <Link to={`/seller/${product.seller_id}`} className="btn btn-ghost btn-sm" style={{ width: '100%', marginBottom: 8 }}>
                 Все объявления продавца
               </Link>
-              {user && user.id !== product.seller_id && (
+              {user && user.id !== product.seller_id && product.seller_account_type === 'company' && (
                 <button
                   disabled={chatLoading}
                   onClick={async () => {
@@ -299,10 +355,10 @@ export default function Product() {
                       setChatLoading(false);
                     }
                   }}
-                  className="btn btn-outline btn-sm"
+                  className="btn btn-ghost btn-sm"
                   style={{ width: '100%' }}
                 >
-                  {chatLoading ? 'Открываем чат...' : '💬 Написать продавцу'}
+                  {chatLoading ? 'Открываем чат...' : '💬 Написать в магазин'}
                 </button>
               )}
             </div>

@@ -35,6 +35,7 @@ export default function Catalog() {
     city: searchParams.get('city') || '',
     sort: searchParams.get('sort') || 'new',
     page: parseInt(searchParams.get('page') || '1'),
+    seller_type: searchParams.get('seller_type') || '',
   });
 
   const fetchProducts = useCallback(async () => {
@@ -58,13 +59,31 @@ export default function Catalog() {
   }, [filters, setSearchParams]);
 
   const setFilter = (key, value) => setFilters(prev => ({ ...prev, [key]: value, page: 1 }));
-  const resetFilters = () => setFilters(prev => ({ search: prev.search, category: '', min_price: '', max_price: '', condition: '', city: '', sort: 'new', page: 1 }));
+  const resetFilters = () => setFilters(prev => ({ search: prev.search, category: '', min_price: '', max_price: '', condition: '', city: '', sort: 'new', seller_type: '', page: 1 }));
   const pages = Math.ceil(total / LIMIT);
-  const hasFilters = !!(filters.category || filters.min_price || filters.max_price || filters.condition || filters.city);
-  const activeFilterCount = [filters.category, filters.min_price || filters.max_price, filters.condition, filters.city].filter(Boolean).length;
+  const hasFilters = !!(filters.category || filters.min_price || filters.max_price || filters.condition || filters.city || filters.seller_type);
+  const activeFilterCount = [filters.category, filters.min_price || filters.max_price, filters.condition, filters.city, filters.seller_type].filter(Boolean).length;
 
   const FilterContent = () => (
     <div>
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 10, color: 'var(--text)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Тип продавца</div>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {[['', 'Все'], ['company', '🏢 Магазины'], ['personal', '👤 Частники']].map(([val, label]) => (
+            <button key={val} onClick={() => setFilter('seller_type', val)}
+              style={{
+                padding: '6px 14px', borderRadius: 100, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                border: '1.5px solid',
+                borderColor: filters.seller_type === val ? 'var(--primary)' : 'var(--border)',
+                background: filters.seller_type === val ? 'var(--primary-bg)' : 'white',
+                color: filters.seller_type === val ? 'var(--primary-dark)' : 'var(--text-secondary)',
+                transition: 'all 0.15s',
+              }}
+            >{label}</button>
+          ))}
+        </div>
+      </div>
+
       <div style={{ marginBottom: 20 }}>
         <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 10, color: 'var(--text)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Категория</div>
         {CATEGORIES.map(cat => (

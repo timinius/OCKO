@@ -13,6 +13,7 @@ const favoriteRoutes = require('./routes/favorites');
 const userRoutes = require('./routes/users');
 const aiRoutes = require('./routes/ai');
 const chatRoutes = require('./routes/chat');
+const sellerRoutes = require('./routes/seller');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -37,6 +38,7 @@ app.use('/api/favorites', favoriteRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/seller', sellerRoutes);
 
 // Serve built React app in production
 if (isProd) {

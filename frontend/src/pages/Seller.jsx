@@ -58,6 +58,7 @@ export default function Seller() {
     </div>
   );
 
+  const isCompany = seller.account_type === 'company';
   const initials = seller.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
   const isOwnProfile = user?.id === parseInt(id);
   const ratingBars = [5,4,3,2,1].map(star => ({
@@ -70,13 +71,35 @@ export default function Seller() {
       <div className="container">
         {/* Seller header */}
         <div className="card" style={{ padding: '28px 28px', marginBottom: 20, display: 'flex', alignItems: 'flex-start', gap: 24, flexWrap: 'wrap' }}>
-          <div style={{ width: 90, height: 90, borderRadius: '50%', background: 'var(--green)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 30, flexShrink: 0 }}>
-            {seller.avatar ? <img src={seller.avatar} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} alt="" /> : initials}
+          {/* Avatar / Store Logo */}
+          <div style={{
+            width: 90, height: 90, borderRadius: isCompany ? 20 : '50%',
+            background: isCompany ? 'var(--primary-bg)' : 'var(--green)',
+            color: isCompany ? 'var(--primary-dark)' : 'white',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontWeight: 700, fontSize: isCompany ? 36 : 30, flexShrink: 0,
+            border: isCompany ? '2px solid var(--border)' : 'none',
+          }}>
+            {seller.avatar
+              ? <img src={seller.avatar} style={{ width: '100%', height: '100%', borderRadius: 'inherit', objectFit: 'cover' }} alt="" />
+              : isCompany ? '🏢' : initials}
           </div>
+
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
               <div>
-                <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 6 }}>{seller.name}</h1>
+                {isCompany && seller.company_name && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <h1 style={{ fontSize: 24, fontWeight: 900, letterSpacing: '-0.04em', margin: 0 }}>{seller.company_name}</h1>
+                    <span style={{ background: 'var(--primary)', color: 'white', padding: '3px 10px', borderRadius: 100, fontSize: 11, fontWeight: 800, letterSpacing: '0.04em', flexShrink: 0 }}>МАГАЗИН</span>
+                  </div>
+                )}
+                <h2 style={{ fontSize: isCompany ? 14 : 22, fontWeight: isCompany ? 500 : 700, color: isCompany ? 'var(--text-secondary)' : 'var(--text)', margin: '0 0 6px' }}>
+                  {isCompany ? `Контакт: ${seller.name}` : seller.name}
+                </h2>
+                {isCompany && seller.company_inn && (
+                  <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}>ИНН: {seller.company_inn}</div>
+                )}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                   <StarRating value={seller.rating || 0} size={18} />
                   <span style={{ fontWeight: 600, fontSize: 16 }}>{(seller.rating || 0).toFixed(1)}</span>
@@ -84,12 +107,14 @@ export default function Seller() {
                 </div>
                 <div style={{ display: 'flex', gap: 16, fontSize: 13, color: 'var(--text-secondary)', flexWrap: 'wrap' }}>
                   {seller.city && <span>📍 {seller.city}</span>}
-                  <span>📅 На OCKO с {formatDate(seller.created_at)}</span>
-                  <span>📦 {seller.products_count} объявлений</span>
+                  <span>📅 На Флип с {formatDate(seller.created_at)}</span>
+                  <span>📦 {seller.products_count} {isCompany ? 'товаров' : 'объявлений'}</span>
                 </div>
               </div>
               {isOwnProfile && (
-                <Link to="/profile" className="btn btn-outline btn-sm">Редактировать профиль</Link>
+                <Link to={isCompany ? '/dashboard' : '/profile'} className="btn btn-outline btn-sm">
+                  {isCompany ? 'Дашборд магазина' : 'Редактировать профиль'}
+                </Link>
               )}
             </div>
             {seller.about && (
@@ -106,7 +131,7 @@ export default function Seller() {
                   <span style={{ fontSize: 12, width: 10, color: 'var(--text-secondary)' }}>{star}</span>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="#F5A623"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>
                   <div style={{ flex: 1, height: 8, background: 'var(--border)', borderRadius: 4, overflow: 'hidden' }}>
-                    <div style={{ height: '100%', background: 'var(--red)', width: `${(count / maxCount) * 100}%`, borderRadius: 4, transition: 'width 0.5s' }} />
+                    <div style={{ height: '100%', background: 'var(--primary)', width: `${(count / maxCount) * 100}%`, borderRadius: 4, transition: 'width 0.5s' }} />
                   </div>
                   <span style={{ fontSize: 12, color: 'var(--text-secondary)', width: 16, textAlign: 'right' }}>{count}</span>
                 </div>
@@ -118,7 +143,7 @@ export default function Seller() {
         {/* Tabs */}
         <div className="tabs">
           <button className={`tab-btn ${activeTab === 'products' ? 'active' : ''}`} onClick={() => setActiveTab('products')}>
-            Объявления ({products.length})
+            {isCompany ? 'Товары' : 'Объявления'} ({products.length})
           </button>
           <button className={`tab-btn ${activeTab === 'reviews' ? 'active' : ''}`} onClick={() => setActiveTab('reviews')}>
             Отзывы ({reviews.length})
@@ -129,7 +154,7 @@ export default function Seller() {
           products.length === 0 ? (
             <div className="empty-state">
               <div className="empty-state-icon">📦</div>
-              <h3>Нет активных объявлений</h3>
+              <h3>{isCompany ? 'Нет товаров' : 'Нет активных объявлений'}</h3>
             </div>
           ) : (
             <div className="grid-4">

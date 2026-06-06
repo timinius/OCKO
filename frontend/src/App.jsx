@@ -20,6 +20,7 @@ import AddProduct from './pages/AddProduct';
 import EditProduct from './pages/EditProduct';
 import Favorites from './pages/Favorites';
 import Chats from './pages/Chats';
+import Dashboard from './pages/Dashboard';
 import NotFound from './pages/NotFound';
 
 function AppInner() {
@@ -47,6 +48,7 @@ function AppInner() {
           <Route path="/edit/:id" element={<EditProduct />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/chats" element={<Chats />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
