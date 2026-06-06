@@ -14,15 +14,13 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [unreadChats, setUnreadChats] = useState(0);
   const menuRef = useRef(null);
-  const inputFocusedRef = useRef(false);
 
   useEffect(() => {
-    // Don't override input while user is actively typing
-    if (!inputFocusedRef.current) {
-      const params = new URLSearchParams(location.search);
-      setSearch(params.get('search') || '');
-    }
-  }, [location.search]);
+    // Sync search from URL only when navigating to a different page,
+    // not when catalog filters change (same pathname, different query params)
+    const params = new URLSearchParams(location.search);
+    setSearch(params.get('search') || '');
+  }, [location.pathname]);
 
   useEffect(() => {
     setMobileOpen(false);
@@ -84,8 +82,8 @@ export default function Header() {
               </svg>
               <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Поиск товаров..."
                 style={{ width: '100%', padding: '9px 12px 9px 38px', background: 'rgba(255,255,255,0.1)', border: '1.5px solid rgba(255,255,255,0.15)', borderRadius: '10px 0 0 10px', fontSize: 13, outline: 'none', color: 'white', transition: 'all 0.2s' }}
-                onFocus={e => { inputFocusedRef.current = true; e.target.style.background = 'rgba(255,255,255,0.16)'; e.target.style.borderColor = 'rgba(255,255,255,0.4)'; }}
-                onBlur={e => { inputFocusedRef.current = false; e.target.style.background = 'rgba(255,255,255,0.1)'; e.target.style.borderColor = 'rgba(255,255,255,0.15)'; }}
+                onFocus={e => { e.target.style.background = 'rgba(255,255,255,0.16)'; e.target.style.borderColor = 'rgba(255,255,255,0.4)'; }}
+                onBlur={e => { e.target.style.background = 'rgba(255,255,255,0.1)'; e.target.style.borderColor = 'rgba(255,255,255,0.15)'; }}
               />
             </div>
             <button type="submit" style={{ background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '0 10px 10px 0', padding: '9px 16px', fontWeight: 700, cursor: 'pointer', fontSize: 13, flexShrink: 0, transition: 'background 0.2s' }}

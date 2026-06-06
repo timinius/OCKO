@@ -7,7 +7,7 @@ const fs = require('fs');
 const { getDB } = require('../db/init');
 const { authenticateToken, JWT_SECRET } = require('../middleware/auth');
 
-const uploadDir = path.join(__dirname, '..', 'uploads');
+const uploadDir = process.env.UPLOADS_PATH || path.join(__dirname, '..', 'uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 const avatarUpload = multer({
   storage: multer.diskStorage({

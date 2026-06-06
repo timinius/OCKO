@@ -26,16 +26,29 @@ function getOnlineStatus(lastSeen) {
   const diff = Date.now() - parseUTCDate(lastSeen).getTime();
   if (diff < 5 * 60 * 1000) return { text: 'онлайн', online: true };
   if (diff < 60 * 60 * 1000) return { text: 'был(а) недавно', online: false };
-  return null;
+  if (diff < 24 * 60 * 60 * 1000) return { text: 'сегодня', online: false };
+  return { text: 'давно не заходил(а)', online: false };
 }
 
 function Initials({ name, avatar, size = 44, radius = '50%' }) {
+  const [imgErr, setImgErr] = useState(false);
   const initials = name ? name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : '?';
   return (
     <div style={{ width: size, height: size, borderRadius: radius, background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: size * 0.36, overflow: 'hidden', flexShrink: 0 }}>
-      {avatar
-        ? <img src={avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
+      {avatar && !imgErr
+        ? <img src={avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={() => setImgErr(true)} />
         : initials}
+    </div>
+  );
+}
+
+function ProductThumb({ src }) {
+  const [err, setErr] = useState(false);
+  return (
+    <div style={{ width: 36, height: 36, borderRadius: 8, overflow: 'hidden', background: 'var(--bg)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)' }}>
+      {src && !err
+        ? <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={() => setErr(true)} />
+        : <span style={{ fontSize: 18 }}>📦</span>}
     </div>
   );
 }
@@ -226,11 +239,7 @@ export default function Chats() {
                 onMouseEnter={e => e.currentTarget.style.background = '#e8f0ea'}
                 onMouseLeave={e => e.currentTarget.style.background = 'var(--bg)'}
               >
-                <div style={{ width: 36, height: 36, borderRadius: 8, overflow: 'hidden', background: '#ddd', flexShrink: 0 }}>
-                  {active.product_image
-                    ? <img src={active.product_image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display = 'none'} />
-                    : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>📦</div>}
-                </div>
+                <ProductThumb key={active.product_id} src={active.product_image} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{active.product_title}</div>
                   {active.product_price && <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{new Intl.NumberFormat('ru-RU').format(active.product_price)} ₽</div>}
