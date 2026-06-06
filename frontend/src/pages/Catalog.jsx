@@ -52,6 +52,12 @@ export default function Catalog() {
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
+  // Sync search from URL when Header navigates to /catalog?search=... while already on /catalog
+  const urlSearch = searchParams.get('search') || '';
+  useEffect(() => {
+    setFilters(prev => prev.search === urlSearch ? prev : { ...prev, search: urlSearch, page: 1 });
+  }, [urlSearch]);
+
   useEffect(() => {
     const params = {};
     Object.entries(filters).forEach(([k, v]) => { if (v && !(k === 'page' && v === 1) && !(k === 'sort' && v === 'new')) params[k] = v; });
