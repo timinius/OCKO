@@ -26,8 +26,10 @@ export default function Catalog() {
   const [loading, setLoading] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
 
+  // search живёт только в URL — читаем напрямую из searchParams, не храним в filters
+  const searchQuery = searchParams.get('search') || '';
+
   const [filters, setFilters] = useState({
-    search: searchParams.get('search') || '',
     category: searchParams.get('category') || '',
     min_price: searchParams.get('min_price') || '',
     max_price: searchParams.get('max_price') || '',
@@ -42,30 +44,26 @@ export default function Catalog() {
     setLoading(true);
     try {
       const params = new URLSearchParams();
+      if (searchQuery) params.set('search', searchQuery);
       Object.entries(filters).forEach(([k, v]) => { if (v) params.set(k, v); });
       params.set('limit', LIMIT);
       const res = await api.get(`/products?${params}`);
       setProducts(res.data.products);
       setTotal(res.data.total);
     } catch { setProducts([]); } finally { setLoading(false); }
-  }, [filters]);
+  }, [filters, searchQuery]);
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
-  // Sync search from URL when Header navigates to /catalog?search=... while already on /catalog
-  const urlSearch = searchParams.get('search') || '';
-  useEffect(() => {
-    setFilters(prev => prev.search === urlSearch ? prev : { ...prev, search: urlSearch, page: 1 });
-  }, [urlSearch]);
-
   useEffect(() => {
     const params = {};
+    if (searchQuery) params.search = searchQuery;
     Object.entries(filters).forEach(([k, v]) => { if (v && !(k === 'page' && v === 1) && !(k === 'sort' && v === 'new')) params[k] = v; });
     setSearchParams(params, { replace: true });
-  }, [filters, setSearchParams]);
+  }, [filters, searchQuery, setSearchParams]);
 
   const setFilter = (key, value) => setFilters(prev => ({ ...prev, [key]: value, page: 1 }));
-  const resetFilters = () => setFilters(prev => ({ search: prev.search, category: '', min_price: '', max_price: '', condition: '', city: '', sort: 'new', seller_type: '', page: 1 }));
+  const resetFilters = () => setFilters({ category: '', min_price: '', max_price: '', condition: '', city: '', sort: 'new', seller_type: '', page: 1 });
   const pages = Math.ceil(total / LIMIT);
   const hasFilters = !!(filters.category || filters.min_price || filters.max_price || filters.condition || filters.city || filters.seller_type);
   const activeFilterCount = [filters.category, filters.min_price || filters.max_price, filters.condition, filters.city, filters.seller_type].filter(Boolean).length;
