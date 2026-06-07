@@ -38,7 +38,7 @@ export default function Home() {
       <div style={{ padding: '8px 12px 0', maxWidth: 1264, margin: '0 auto' }}>
       <section style={{
         background: 'linear-gradient(145deg, #0F2318 0%, #1A3A27 45%, #243F2E 100%)',
-        color: 'white', padding: '56px 52px 64px',
+        color: 'white', padding: '0px 52px 0px',
         position: 'relative', overflow: 'hidden', borderRadius: 16,
       }}>
         <div style={{ position: 'absolute', top: -120, right: -80, width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(142,211,168,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
@@ -51,12 +51,6 @@ export default function Home() {
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--brand-mint)', display: 'inline-block' }} />
               Тысячи товаров от проверенных продавцов
             </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>
-              <img src="/logo-mark-mint.svg" alt="" style={{ width: 50, height: 50, filter: 'drop-shadow(0 0 20px rgba(142,211,168,0.4))' }} />
-              <span style={{ color: 'white', fontWeight: 800, fontSize: 46, letterSpacing: '-0.04em', fontFamily: 'Onest, sans-serif', lineHeight: 1 }}>Флип</span>
-            </div>
-
             <h1 style={{ fontSize: 36, fontWeight: 800, marginBottom: 14, letterSpacing: -0.8, lineHeight: 1.13 }}>
               Покупай и продавай<br />
               <span style={{ color: 'var(--brand-mint)' }}>быстро и выгодно</span>
@@ -65,7 +59,7 @@ export default function Home() {
               Электроника, одежда, авто — всё в одном месте
             </p>
 
-            <form onSubmit={handleSearch} style={{ display: 'flex', maxWidth: 460, marginBottom: 26, borderRadius: 100, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.32)', background: 'white' }}>
+            <form onSubmit={handleSearch} style={{ display: 'flex', maxWidth: 460, marginBottom: 0px, borderRadius: 100, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.32)', background: 'white' }}>
               <svg style={{ flexShrink: 0, margin: 'auto 0 auto 18px', opacity: 0.35 }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0D1A11" strokeWidth="2.5">
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
@@ -80,13 +74,6 @@ export default function Home() {
               >Найти</button>
             </form>
 
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {[['✓', 'Бесплатно'], ['✓', 'Безопасно'], ['✓', 'Доставка по России']].map(([icon, text]) => (
-                <span key={text} style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 100, padding: '6px 14px', fontSize: 12, color: 'rgba(255,255,255,0.72)', display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <span style={{ color: 'var(--brand-mint)', fontWeight: 700 }}>{icon}</span> {text}
-                </span>
-              ))}
-            </div>
           </div>
 
           {/* Right: animated cards */}
@@ -166,6 +153,7 @@ export default function Home() {
     </div>
   );
 }
+
 
 const HERO_CARDS = [
   { img: '/hero/sneakers.jpg', name: 'Кроссовки',   price: '6 990 ₽',   badge: 'Новый' },
