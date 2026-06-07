@@ -175,67 +175,78 @@ const HERO_CARDS = [
   { emoji: '👟', name: 'Nike Air Jordan 1',  price: '12 990 ₽',  badge: 'Новый', bg: '#F4F0FF', stars: '4.9' },
 ];
 
+// pos 0=центр, 1=правая видимая, 2=правая скрытая (вход), 3=левая скрытая (вход), 4=левая видимая
+const SLOTS = {
+  0: { x:    0, ry:   0, s: 1.00, o: 1.00, z: 5 },
+  1: { x:  252, ry: -42, s: 0.70, o: 0.82, z: 4 },
+  2: { x:  460, ry: -62, s: 0.50, o: 0.00, z: 3 },
+  3: { x: -460, ry:  62, s: 0.50, o: 0.00, z: 3 },
+  4: { x: -252, ry:  42, s: 0.70, o: 0.82, z: 4 },
+};
+
 function HeroCards() {
-  const wrapRef = useRef(null);
-  const angleRef = useRef(0);
-  const rafRef = useRef(null);
+  const [active, setActive] = useState(0);
+  const prevRef = useRef(0);
   const N = HERO_CARDS.length;
-  const RX = 118; // horizontal radius of ellipse
 
-  useLayoutEffect(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-    const cards = el.querySelectorAll('.hcc');
-
-    const tick = () => {
-      angleRef.current += 0.007;
-      cards.forEach((card, i) => {
-        const a = angleRef.current + (2 * Math.PI / N) * i;
-        const x = Math.sin(a) * RX;
-        const z = Math.cos(a);           // -1 (back) … 1 (front)
-        const nz = (z + 1) / 2;          // 0…1
-        const scale = 0.46 + nz * 0.54;
-        const opacity = 0.18 + nz * 0.82;
-        const yShift = (1 - nz) * 12;
-        card.style.transform = `translateX(${x}px) translateY(${yShift}px) scale(${scale})`;
-        card.style.opacity = opacity;
-        card.style.zIndex = Math.round(nz * 10);
+  useEffect(() => {
+    const t = setInterval(() => {
+      setActive(a => {
+        prevRef.current = a;
+        return (a + 1) % N;
       });
-      rafRef.current = requestAnimationFrame(tick);
-    };
-
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
+    }, 2800);
+    return () => clearInterval(t);
   }, []);
 
   return (
-    <div ref={wrapRef} style={{ position: 'relative', width: 380, height: 290, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      {/* Oval track — очень лёгкий */}
-      <svg width="310" height="58" viewBox="0 0 310 58"
+    <div style={{
+      position: 'relative', width: 620, height: 300,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      perspective: '1100px',
+    }}>
+      {/* Лёгкий овальный трек — намёк на цилиндр */}
+      <svg width="530" height="76" viewBox="0 0 530 76"
         style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', pointerEvents: 'none' }}>
-        {/* мягкое свечение */}
-        <ellipse cx="155" cy="29" rx="152" ry="27" fill="none" stroke="rgba(142,211,168,0.07)" strokeWidth="10" />
-        {/* пунктирный контур */}
-        <ellipse cx="155" cy="29" rx="152" ry="27" fill="none" stroke="rgba(142,211,168,0.22)" strokeWidth="1" strokeDasharray="5 8" />
+        <ellipse cx="265" cy="38" rx="262" ry="34" fill="none" stroke="rgba(142,211,168,0.07)" strokeWidth="14" />
+        <ellipse cx="265" cy="38" rx="262" ry="34" fill="none" stroke="rgba(142,211,168,0.20)" strokeWidth="1" strokeDasharray="6 9" />
       </svg>
 
-      {HERO_CARDS.map((card) => (
-        <div key={card.name} className="hcc" style={{ position: 'absolute', width: 150, transformOrigin: 'center center' }}>
-          <div style={{ background: 'white', borderRadius: 14, overflow: 'hidden', boxShadow: '0 10px 32px rgba(0,0,0,0.3)' }}>
-            <div style={{ background: card.bg, height: 98, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 44 }}>
-              {card.emoji}
-            </div>
-            <div style={{ padding: '10px 12px' }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#0D1A11', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{card.name}</div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: '#36855A', marginBottom: 7 }}>{card.price}</div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 9, background: '#EEF7F2', color: '#36855A', padding: '2px 7px', borderRadius: 100, fontWeight: 700 }}>{card.badge}</span>
-                <span style={{ fontSize: 9, color: '#637069' }}>⭐ {card.stars}</span>
+      {HERO_CARDS.map((card, i) => {
+        const pos = (i - active + N) % N;
+        const prevPos = (i - prevRef.current + N) % N;
+        const sl = SLOTS[pos];
+        // Оба скрытые — мгновенный телепорт без анимации transform
+        const hiddenBoth = (pos === 2 || pos === 3) && (prevPos === 2 || prevPos === 3);
+
+        return (
+          <div key={card.name} style={{
+            position: 'absolute',
+            width: 190,
+            transform: `translateX(${sl.x}px) rotateY(${sl.ry}deg) scale(${sl.s})`,
+            opacity: sl.o,
+            zIndex: sl.z,
+            transition: hiddenBoth
+              ? 'none'
+              : 'transform 0.72s cubic-bezier(0.4,0,0.2,1), opacity 0.58s ease',
+            transformOrigin: 'center center',
+          }}>
+            <div style={{ background: 'white', borderRadius: 16, overflow: 'hidden', boxShadow: pos === 0 ? '0 20px 52px rgba(0,0,0,0.42)' : '0 8px 24px rgba(0,0,0,0.22)' }}>
+              <div style={{ background: card.bg, height: 118, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 52 }}>
+                {card.emoji}
+              </div>
+              <div style={{ padding: '12px 14px' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#0D1A11', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{card.name}</div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: '#36855A', marginBottom: 8 }}>{card.price}</div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 10, background: '#EEF7F2', color: '#36855A', padding: '3px 8px', borderRadius: 100, fontWeight: 700 }}>{card.badge}</span>
+                  <span style={{ fontSize: 10, color: '#637069' }}>⭐ {card.stars}</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
