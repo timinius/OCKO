@@ -168,13 +168,13 @@ export default function Home() {
 }
 
 const HERO_CARDS = [
-  { emoji: '💻', name: 'MacBook Pro 14"',    price: '189 900 ₽', badge: 'Новый', bg: '#E8F4FF', stars: '4.9' },
-  { emoji: '📱', name: 'iPhone 15 Pro Max',  price: '99 990 ₽',  badge: 'Новый', bg: '#F0F0FF', stars: '5.0' },
-  { emoji: '🚲', name: 'Велосипед Trek FX3', price: '47 500 ₽',  badge: 'Б/у',   bg: '#FFF4E0', stars: '4.7' },
-  { emoji: '🛋️', name: 'Диван угловой',      price: '34 200 ₽',  badge: 'Б/у',   bg: '#FFF0F0', stars: '4.8' },
-  { emoji: '👟', name: 'Nike Air Jordan 1',  price: '12 990 ₽',  badge: 'Новый', bg: '#F4F0FF', stars: '4.9' },
-  { emoji: '🎮', name: 'PlayStation 5',       price: '44 990 ₽',  badge: 'Б/у',   bg: '#EEF4FF', stars: '4.8' },
-  { emoji: '📸', name: 'Canon EOS R50',       price: '67 500 ₽',  badge: 'Новый', bg: '#FFF8F0', stars: '4.9' },
+  { img: '/hero/sneakers.jpg', name: 'Кроссовки',   price: '6 990 ₽',   badge: 'Новый' },
+  { img: '/hero/laptop.jpg',   name: 'Ноутбук',     price: '89 990 ₽',  badge: 'Б/у'   },
+  { img: '/hero/sofa.jpg',     name: 'Диван',       price: '25 000 ₽',  badge: 'Б/у'   },
+  { img: '/hero/bicycle.jpg',  name: 'Велосипед',   price: '35 000 ₽',  badge: 'Б/у'   },
+  { img: '/hero/camera.jpg',   name: 'Фотоаппарат', price: '67 500 ₽',  badge: 'Новый' },
+  { img: '/hero/phone.jpg',    name: 'Смартфон',    price: '49 990 ₽',  badge: 'Б/у'   },
+  { img: '/hero/console.jpg',  name: 'Приставка',   price: '44 990 ₽',  badge: 'Б/у'   },
 ];
 
 // N=7: pos 0=центр, 1=ближняя правая, 2=дальняя правая, 3=скрытая правая,
@@ -204,7 +204,7 @@ function HeroCards() {
 
   return (
     <div style={{
-      position: 'relative', width: 720, height: 310,
+      position: 'relative', width: 720, height: 340,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       perspective: '1000px',
     }}>
@@ -219,7 +219,7 @@ function HeroCards() {
 
         return (
           <div key={card.name} style={{
-            position: 'absolute', width: 188,
+            position: 'absolute', width: 158,
             transform: `translateX(${p.x}px) rotateY(${p.ry}deg) scale(${p.s})`,
             opacity: p.o,
             zIndex: p.z,
@@ -236,21 +236,20 @@ function HeroCards() {
             }} />
             {/* Сама карточка */}
             <div style={{
-              background: 'white', borderRadius: 16, overflow: 'hidden',
+              background: 'white', borderRadius: 14, overflow: 'hidden',
               boxShadow: isCenter
                 ? '0 0 0 1.5px rgba(255,255,255,0.22), 0 0 36px rgba(255,255,255,0.18), 0 24px 56px rgba(0,0,0,0.46)'
                 : '0 8px 26px rgba(0,0,0,0.24)',
               transition: 'box-shadow 0.75s ease',
             }}>
-              <div style={{ background: card.bg, height: 118, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 50 }}>
-                {card.emoji}
+              <div style={{ height: 152, overflow: 'hidden', background: '#eee' }}>
+                <img src={card.img} alt={card.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               </div>
-              <div style={{ padding: '12px 14px' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#0D1A11', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{card.name}</div>
-                <div style={{ fontSize: 15, fontWeight: 800, color: '#36855A', marginBottom: 8 }}>{card.price}</div>
+              <div style={{ padding: '10px 12px 12px' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#0D1A11', marginBottom: 5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{card.name}</div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: 10, background: '#EEF7F2', color: '#36855A', padding: '3px 8px', borderRadius: 100, fontWeight: 700 }}>{card.badge}</span>
-                  <span style={{ fontSize: 10, color: '#637069' }}>⭐ {card.stars}</span>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: '#36855A' }}>{card.price}</div>
+                  <span style={{ fontSize: 10, background: '#EEF7F2', color: '#36855A', padding: '2px 7px', borderRadius: 100, fontWeight: 700 }}>{card.badge}</span>
                 </div>
               </div>
             </div>
