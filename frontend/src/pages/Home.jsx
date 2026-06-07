@@ -38,61 +38,60 @@ export default function Home() {
       <div style={{ padding: '8px 12px 0', maxWidth: 1264, margin: '0 auto' }}>
       <section style={{
         background: 'linear-gradient(145deg, #0F2318 0%, #1A3A27 45%, #243F2E 100%)',
-        color: 'white', padding: '64px 40px 72px', textAlign: 'center',
+        color: 'white', padding: '56px 52px 64px',
         position: 'relative', overflow: 'hidden', borderRadius: 16,
       }}>
-        {/* Декоративные элементы */}
         <div style={{ position: 'absolute', top: -120, right: -80, width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(142,211,168,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: -80, left: -60, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(54,133,90,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', top: '40%', left: '10%', width: 180, height: 180, borderRadius: '50%', background: 'radial-gradient(circle, rgba(142,211,168,0.04) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-        <div style={{ position: 'relative', maxWidth: 700, margin: '0 auto' }}>
-          {/* Pill badge */}
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(142,211,168,0.12)', border: '1px solid rgba(142,211,168,0.2)', borderRadius: 100, padding: '6px 16px', fontSize: 13, marginBottom: 28, backdropFilter: 'blur(12px)' }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--brand-mint)', display: 'inline-block' }} />
-            Тысячи товаров от проверенных продавцов
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 48 }}>
+          {/* Left: text */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(142,211,168,0.12)', border: '1px solid rgba(142,211,168,0.2)', borderRadius: 100, padding: '6px 16px', fontSize: 13, marginBottom: 26, backdropFilter: 'blur(12px)' }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--brand-mint)', display: 'inline-block' }} />
+              Тысячи товаров от проверенных продавцов
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>
+              <img src="/logo-mark-mint.svg" alt="" style={{ width: 50, height: 50, filter: 'drop-shadow(0 0 20px rgba(142,211,168,0.4))' }} />
+              <span style={{ color: 'white', fontWeight: 800, fontSize: 46, letterSpacing: '-0.04em', fontFamily: 'Onest, sans-serif', lineHeight: 1 }}>Флип</span>
+            </div>
+
+            <h1 style={{ fontSize: 36, fontWeight: 800, marginBottom: 14, letterSpacing: -0.8, lineHeight: 1.13 }}>
+              Покупай и продавай<br />
+              <span style={{ color: 'var(--brand-mint)' }}>быстро и выгодно</span>
+            </h1>
+            <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', marginBottom: 30, lineHeight: 1.65, maxWidth: 360 }}>
+              Электроника, одежда, авто — всё в одном месте
+            </p>
+
+            <form onSubmit={handleSearch} style={{ display: 'flex', maxWidth: 460, marginBottom: 26, borderRadius: 100, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.32)', background: 'white' }}>
+              <svg style={{ flexShrink: 0, margin: 'auto 0 auto 18px', opacity: 0.35 }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0D1A11" strokeWidth="2.5">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input type="text" value={searchVal} onChange={e => setSearchVal(e.target.value)}
+                placeholder="iPhone, велосипед, диван..."
+                style={{ flex: 1, padding: '15px 14px', border: 'none', fontSize: 14, outline: 'none', color: 'var(--text)', background: 'transparent', minWidth: 0 }}
+              />
+              <button type="submit"
+                style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '15px 22px', fontWeight: 700, fontSize: 14, cursor: 'pointer', flexShrink: 0, borderRadius: 100, margin: 4, transition: 'background 0.2s' }}
+                onMouseEnter={e => e.currentTarget.style.background = 'var(--primary-dark)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'var(--primary)'}
+              >Найти</button>
+            </form>
+
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {[['✓', 'Бесплатно'], ['✓', 'Безопасно'], ['✓', 'Доставка по России']].map(([icon, text]) => (
+                <span key={text} style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 100, padding: '6px 14px', fontSize: 12, color: 'rgba(255,255,255,0.72)', display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <span style={{ color: 'var(--brand-mint)', fontWeight: 700 }}>{icon}</span> {text}
+                </span>
+              ))}
+            </div>
           </div>
 
-          {/* Logo + name */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginBottom: 24 }}>
-            <img src="/logo-mark-mint.svg" alt="" style={{ width: 60, height: 60, filter: 'drop-shadow(0 0 24px rgba(142,211,168,0.4))' }} />
-            <span style={{ color: 'white', fontWeight: 800, fontSize: 52, letterSpacing: '-0.04em', fontFamily: 'Onest, sans-serif', lineHeight: 1 }}>Флип</span>
-          </div>
-
-          <h1 style={{ fontSize: 40, fontWeight: 800, marginBottom: 16, letterSpacing: -1, lineHeight: 1.12, maxWidth: 560, margin: '0 auto 16px' }}>
-            Покупай и продавай<br />
-            <span style={{ color: 'var(--brand-mint)' }}>быстро и выгодно</span>
-          </h1>
-          <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.62)', marginBottom: 40, maxWidth: 420, margin: '0 auto 40px', lineHeight: 1.65 }}>
-            Электроника, одежда, авто — всё в одном месте
-          </p>
-
-          {/* Search */}
-          <form onSubmit={handleSearch} style={{ display: 'flex', maxWidth: 600, margin: '0 auto 36px', borderRadius: 100, overflow: 'hidden', boxShadow: '0 12px 48px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.2)', background: 'white' }}>
-            <svg style={{ flexShrink: 0, margin: 'auto 0 auto 20px', opacity: 0.35 }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D1A11" strokeWidth="2.5">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <input type="text" value={searchVal} onChange={e => setSearchVal(e.target.value)}
-              placeholder="Что ищете? iPhone, велосипед, диван..."
-              style={{ flex: 1, padding: '18px 16px', border: 'none', fontSize: 15, outline: 'none', color: 'var(--text)', background: 'transparent', minWidth: 0 }}
-            />
-            <button type="submit" className="hero-search-btn"
-              style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '18px 28px', fontWeight: 700, fontSize: 15, cursor: 'pointer', flexShrink: 0, transition: 'background 0.2s', display: 'flex', alignItems: 'center', gap: 6, borderRadius: '0 100px 100px 0', margin: 4, borderRadius: 100 }}
-              onMouseEnter={e => e.currentTarget.style.background = 'var(--primary-dark)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'var(--primary)'}
-            >
-              <svg className="hero-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ display: 'none' }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <span className="hero-search-text">Найти</span>
-            </button>
-          </form>
-
-          {/* Feature pills */}
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
-            {[['✓', 'Бесплатно'], ['✓', 'Безопасно'], ['✓', 'Доставка по России']].map(([icon, text]) => (
-              <span key={text} style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 100, padding: '7px 16px', fontSize: 13, color: 'rgba(255,255,255,0.75)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ color: 'var(--brand-mint)', fontWeight: 700 }}>{icon}</span> {text}
-              </span>
-            ))}
+          {/* Right: animated cards */}
+          <div className="hero-cards-col" style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <HeroCards />
           </div>
         </div>
       </section>
@@ -164,6 +163,64 @@ export default function Home() {
           <PopularProducts />
         </div>
       </section>
+    </div>
+  );
+}
+
+const HERO_CARDS = [
+  { emoji: '💻', name: 'MacBook Pro 14"',    price: '189 900 ₽', badge: 'Новый', bg: '#E8F4FF', stars: '4.9' },
+  { emoji: '📱', name: 'iPhone 15 Pro Max',  price: '99 990 ₽',  badge: 'Новый', bg: '#F0F0FF', stars: '5.0' },
+  { emoji: '🚲', name: 'Велосипед Trek FX3', price: '47 500 ₽',  badge: 'Б/у',   bg: '#FFF4E0', stars: '4.7' },
+  { emoji: '🛋️', name: 'Диван угловой',      price: '34 200 ₽',  badge: 'Б/у',   bg: '#FFF0F0', stars: '4.8' },
+  { emoji: '👟', name: 'Nike Air Jordan 1',  price: '12 990 ₽',  badge: 'Новый', bg: '#F4F0FF', stars: '4.9' },
+];
+
+const CARD_POSITIONS = [
+  { x: 0,  y: 0,  r: -3, s: 1,    o: 1,    z: 10, shadow: '0 24px 56px rgba(0,0,0,0.45)' },
+  { x: 18, y: 14, r: 2,  s: 0.91, o: 0.72, z: 9,  shadow: '0 8px 24px rgba(0,0,0,0.22)' },
+  { x: 30, y: 24, r: 6,  s: 0.83, o: 0.42, z: 8,  shadow: '0 4px 12px rgba(0,0,0,0.12)' },
+  { x: 38, y: 30, r: 9,  s: 0.76, o: 0.18, z: 7,  shadow: 'none' },
+  { x: 42, y: 34, r: 11, s: 0.70, o: 0,    z: 6,  shadow: 'none' },
+];
+
+function HeroCards() {
+  const [active, setActive] = useState(0);
+  const N = HERO_CARDS.length;
+
+  useEffect(() => {
+    const t = setInterval(() => setActive(a => (a + 1) % N), 2600);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div style={{ position: 'relative', width: 270, height: 310 }}>
+      {HERO_CARDS.map((card, i) => {
+        const pos = (i - active + N) % N;
+        const p = CARD_POSITIONS[pos] || CARD_POSITIONS[4];
+        return (
+          <div key={card.name} style={{
+            position: 'absolute', top: 0, left: 0, width: 220,
+            transform: `translateX(${p.x}px) translateY(${p.y}px) rotate(${p.r}deg) scale(${p.s})`,
+            opacity: p.o, zIndex: p.z,
+            transition: 'transform 0.7s cubic-bezier(0.34,1.15,0.64,1), opacity 0.6s ease',
+            transformOrigin: 'top center',
+          }}>
+            <div style={{ background: 'white', borderRadius: 16, overflow: 'hidden', boxShadow: p.shadow }}>
+              <div style={{ background: card.bg, height: 128, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 58 }}>
+                {card.emoji}
+              </div>
+              <div style={{ padding: '14px 16px' }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#0D1A11', marginBottom: 5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{card.name}</div>
+                <div style={{ fontSize: 17, fontWeight: 800, color: '#36855A', marginBottom: 10 }}>{card.price}</div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 11, background: '#EEF7F2', color: '#36855A', padding: '3px 9px', borderRadius: 100, fontWeight: 700 }}>{card.badge}</span>
+                  <span style={{ fontSize: 11, color: '#637069' }}>⭐ {card.stars}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

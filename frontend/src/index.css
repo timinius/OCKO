@@ -262,6 +262,7 @@ input, textarea, select { font-family: inherit; }
 /* ── Home responsive ──────────────────────────── */
 @media (max-width: 768px) {
   .categories-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 8px !important; }
+  .hero-cards-col { display: none !important; }
 }
 @media (max-width: 480px) {
   .hero-search-btn { padding: 16px 14px !important; }
