@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/client';
 import ProductCard from '../components/ProductCard';
@@ -175,52 +175,67 @@ const HERO_CARDS = [
   { emoji: '👟', name: 'Nike Air Jordan 1',  price: '12 990 ₽',  badge: 'Новый', bg: '#F4F0FF', stars: '4.9' },
 ];
 
-const CARD_POSITIONS = [
-  { x: 0,  y: 0,  r: -3, s: 1,    o: 1,    z: 10, shadow: '0 24px 56px rgba(0,0,0,0.45)' },
-  { x: 18, y: 14, r: 2,  s: 0.91, o: 0.72, z: 9,  shadow: '0 8px 24px rgba(0,0,0,0.22)' },
-  { x: 30, y: 24, r: 6,  s: 0.83, o: 0.42, z: 8,  shadow: '0 4px 12px rgba(0,0,0,0.12)' },
-  { x: 38, y: 30, r: 9,  s: 0.76, o: 0.18, z: 7,  shadow: 'none' },
-  { x: 42, y: 34, r: 11, s: 0.70, o: 0,    z: 6,  shadow: 'none' },
-];
-
 function HeroCards() {
-  const [active, setActive] = useState(0);
+  const wrapRef = useRef(null);
+  const angleRef = useRef(0);
+  const rafRef = useRef(null);
   const N = HERO_CARDS.length;
+  const RX = 118; // horizontal radius of ellipse
 
-  useEffect(() => {
-    const t = setInterval(() => setActive(a => (a + 1) % N), 2600);
-    return () => clearInterval(t);
+  useLayoutEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const cards = el.querySelectorAll('.hcc');
+
+    const tick = () => {
+      angleRef.current += 0.007;
+      cards.forEach((card, i) => {
+        const a = angleRef.current + (2 * Math.PI / N) * i;
+        const x = Math.sin(a) * RX;
+        const z = Math.cos(a);           // -1 (back) … 1 (front)
+        const nz = (z + 1) / 2;          // 0…1
+        const scale = 0.46 + nz * 0.54;
+        const opacity = 0.18 + nz * 0.82;
+        const yShift = (1 - nz) * 12;
+        card.style.transform = `translateX(${x}px) translateY(${yShift}px) scale(${scale})`;
+        card.style.opacity = opacity;
+        card.style.zIndex = Math.round(nz * 10);
+      });
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
   }, []);
 
   return (
-    <div style={{ position: 'relative', width: 270, height: 310 }}>
-      {HERO_CARDS.map((card, i) => {
-        const pos = (i - active + N) % N;
-        const p = CARD_POSITIONS[pos] || CARD_POSITIONS[4];
-        return (
-          <div key={card.name} style={{
-            position: 'absolute', top: 0, left: 0, width: 220,
-            transform: `translateX(${p.x}px) translateY(${p.y}px) rotate(${p.r}deg) scale(${p.s})`,
-            opacity: p.o, zIndex: p.z,
-            transition: 'transform 0.7s cubic-bezier(0.34,1.15,0.64,1), opacity 0.6s ease',
-            transformOrigin: 'top center',
-          }}>
-            <div style={{ background: 'white', borderRadius: 16, overflow: 'hidden', boxShadow: p.shadow }}>
-              <div style={{ background: card.bg, height: 128, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 58 }}>
-                {card.emoji}
-              </div>
-              <div style={{ padding: '14px 16px' }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#0D1A11', marginBottom: 5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{card.name}</div>
-                <div style={{ fontSize: 17, fontWeight: 800, color: '#36855A', marginBottom: 10 }}>{card.price}</div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: 11, background: '#EEF7F2', color: '#36855A', padding: '3px 9px', borderRadius: 100, fontWeight: 700 }}>{card.badge}</span>
-                  <span style={{ fontSize: 11, color: '#637069' }}>⭐ {card.stars}</span>
-                </div>
+    <div ref={wrapRef} style={{ position: 'relative', width: 380, height: 290, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      {/* Oval track — очень лёгкий */}
+      <svg width="310" height="58" viewBox="0 0 310 58"
+        style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', pointerEvents: 'none' }}>
+        {/* мягкое свечение */}
+        <ellipse cx="155" cy="29" rx="152" ry="27" fill="none" stroke="rgba(142,211,168,0.07)" strokeWidth="10" />
+        {/* пунктирный контур */}
+        <ellipse cx="155" cy="29" rx="152" ry="27" fill="none" stroke="rgba(142,211,168,0.22)" strokeWidth="1" strokeDasharray="5 8" />
+      </svg>
+
+      {HERO_CARDS.map((card) => (
+        <div key={card.name} className="hcc" style={{ position: 'absolute', width: 150, transformOrigin: 'center center' }}>
+          <div style={{ background: 'white', borderRadius: 14, overflow: 'hidden', boxShadow: '0 10px 32px rgba(0,0,0,0.3)' }}>
+            <div style={{ background: card.bg, height: 98, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 44 }}>
+              {card.emoji}
+            </div>
+            <div style={{ padding: '10px 12px' }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#0D1A11', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{card.name}</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#36855A', marginBottom: 7 }}>{card.price}</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: 9, background: '#EEF7F2', color: '#36855A', padding: '2px 7px', borderRadius: 100, fontWeight: 700 }}>{card.badge}</span>
+                <span style={{ fontSize: 9, color: '#637069' }}>⭐ {card.stars}</span>
               </div>
             </div>
           </div>
-        );
-      })}
+        </div>
+      ))}
     </div>
   );
 }
