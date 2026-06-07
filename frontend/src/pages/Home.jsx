@@ -47,7 +47,10 @@ export default function Home() {
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 48 }}>
           {/* Left: text */}
           <div style={{ flex: 1, minWidth: 0 }}>
-            
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(142,211,168,0.12)', border: '1px solid rgba(142,211,168,0.2)', borderRadius: 100, padding: '6px 16px', fontSize: 13, marginBottom: 26, backdropFilter: 'blur(12px)' }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--brand-mint)', display: 'inline-block' }} />
+              Тысячи товаров от проверенных продавцов
+            </div>
             <h1 style={{ fontSize: 36, fontWeight: 800, marginBottom: 14, letterSpacing: -0.8, lineHeight: 1.13 }}>
               Покупай и продавай<br />
               <span style={{ color: 'var(--brand-mint)' }}>быстро и выгодно</span>
