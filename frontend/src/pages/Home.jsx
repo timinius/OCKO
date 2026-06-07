@@ -59,7 +59,7 @@ export default function Home() {
               Электроника, одежда, авто — всё в одном месте
             </p>
 
-            <form onSubmit={handleSearch} style={{ display: 'flex', maxWidth: 460, marginBottom: 0px, borderRadius: 100, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.32)', background: 'white' }}>
+            <form onSubmit={handleSearch} style={{ display: 'flex', maxWidth: 460, marginBottom: 0, borderRadius: 100, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.32)', background: 'white' }}>
               <svg style={{ flexShrink: 0, margin: 'auto 0 auto 18px', opacity: 0.35 }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0D1A11" strokeWidth="2.5">
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
