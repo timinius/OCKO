@@ -38,7 +38,7 @@ export default function Home() {
       <div style={{ padding: '8px 12px 0', maxWidth: 1264, margin: '0 auto' }}>
       <section style={{
         background: 'linear-gradient(145deg, #0F2318 0%, #1A3A27 45%, #243F2E 100%)',
-        color: 'white', padding: '0px 52px 0px',
+        color: 'white', padding: '10px 52px 10px',
         position: 'relative', overflow: 'hidden', borderRadius: 16,
       }}>
         <div style={{ position: 'absolute', top: -120, right: -80, width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(142,211,168,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
